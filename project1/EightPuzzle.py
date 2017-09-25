@@ -2,13 +2,19 @@ import SearchAlgorithm as Search
 
 
 class EightPuzzleState(Search.NodeStateData):
-    """Internal representation of the eight puzzle"""
+    """Immutable internal representation of the eight puzzle"""
 
     tiles = None  # a tuple (0,1,2,3,4,5,6,7,8)
+    blank_tile_index = None
 
-    def __init__(self):
-        super().__init__()
+    # inheriting from namedtuple makes it immutable
+    def __init__(self, tiles):
+        assert isinstance(tiles, tuple)
+        self.tiles = tuple.__new__(tuple, tiles)
+        self.blank_tile_index = tiles.index(0)
 
+    # TODO: get the neighboring nodes, ie figure out what moves are possible and return a tuple of states that would
+    # result
     def get_neighbors(self):
         pass
 

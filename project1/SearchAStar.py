@@ -14,16 +14,20 @@ class SearchAStar(Search.SearchAlgorithm):
         pass
 
 
-class SearchNodeDataAStar(Search.SearchNodeData):
+class SearchNodeAStar(Search.GraphSearchNode):
     """Data stored in an A* search node"""
 
-    current_state = None
+    def __init__(self, search_data, state_data):
+        super().__init__(search_data, state_data)
+
+
+class NodeSearchDataAStar(Search.NodeSearchData):
+    """Search data pertaining to the given state in the A* search, contains cost functions"""
+
     gcost = None
     hcost = None
 
-    def __init__(self, current_state, gcost, hcost):
-        assert isinstance(current_state, Search.NodeStateData)
-        self.current_state = current_state
+    def __init__(self, gcost, hcost):
         self.gcost = gcost
         self.hcost = hcost
 

@@ -25,9 +25,18 @@ class GraphSearchNode:
         self.state_data = state_data
         self.search_data = search_data
 
-class NodeStateData(ABC):
+
+class NodeSearchData(ABC):
+    """Abstract base class for search data pertaining to a given state, eg path cost
+        Inherited from in the algorithm class"""
+    pass
+
+
+class NodeStateData(ABC, tuple):
     """Abstract base class for state data
+        Inherited from in the state representation class
         The abstract methods defined here require the state to be able to generate the needed search data
+        It's immutable because it inherits from tuple
     """
 
     @abstractmethod
@@ -41,8 +50,3 @@ class NodeStateData(ABC):
     @abstractmethod
     def calculate_h2cost(self):
         pass
-
-
-class NodeSearchData(ABC):
-    """Abstract base class for search data pertaining to a given state, eg path cost"""
-    pass

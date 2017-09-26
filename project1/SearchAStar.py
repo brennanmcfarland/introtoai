@@ -1,4 +1,5 @@
 import SearchAlgorithm as Search
+import queue
 
 
 class SearchAStar(Search.SearchAlgorithm):
@@ -8,6 +9,7 @@ class SearchAStar(Search.SearchAlgorithm):
         super().__init__()
 
     def search(self, initial_state_data, manhattan_distance):
+        #TODO: move initialization to a separate private method
         assert isinstance(initial_state_data, Search.NodeStateData)
         assert isinstance(manhattan_distance, bool)
         # TODO: see if there's a better way to handle this that doesn't involve method name strings if you have time
@@ -16,16 +18,16 @@ class SearchAStar(Search.SearchAlgorithm):
         print(current_node.search_data)
         print(current_node.state_data)
 
-    def create_node(self, state_data, gcost, heuristic):
-        search_data = NodeSearchDataAStar.__new__(NodeSearchDataAStar, gcost, getattr(state_data, heuristic))
-        search_node = SearchNodeAStar.__new__(SearchNodeAStar, search_data, state_data)
+        frontier = queue.PriorityQueue()
 
-        # TODO: the below two lines should not be needed
-        # TODO: also remove the print staements
-        search_node.state_data = state_data
-        search_node.search_data = search_data
-        print(search_data)
-        print(state_data)
+    def prioritize_neighbors(self, node):
+        assert isinstance(node, SearchNodeAStar)
+        neighbors = node.state_data.neighbors #should be a tuple
+
+
+    def create_node(self, state_data, gcost, heuristic):
+        search_data = NodeSearchDataAStar(gcost, getattr(state_data, heuristic))
+        search_node = SearchNodeAStar(search_data, state_data)
         return search_node
 
     def execute_search(self):

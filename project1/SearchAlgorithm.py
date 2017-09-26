@@ -45,6 +45,9 @@ class NodeStateData(ABC, tuple):
         pass
 
     @abstractmethod
+    def gcost(self):
+        pass
+    @abstractmethod
     def h1cost(self):
         pass
 

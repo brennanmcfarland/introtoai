@@ -1,2 +1,5 @@
 #ignore pycharm config files
 .idea/
+
+#ignore pyc files
+*.pyc

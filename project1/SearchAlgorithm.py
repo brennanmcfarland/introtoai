@@ -13,6 +13,7 @@ class SearchAlgorithm(ABC):
         pass
 
 
+# TODO: make this and maybe other node-related classes inherit from tuple to make them immutable if time
 class GraphSearchNode:
     """A node in a search graph"""
 
@@ -40,13 +41,13 @@ class NodeStateData(ABC, tuple):
     """
 
     @abstractmethod
-    def get_neighbors(self):
+    def neighbors(self):
         pass
 
     @abstractmethod
-    def calculate_h1cost(self):
+    def h1cost(self):
         pass
 
     @abstractmethod
-    def calculate_h2cost(self):
+    def h2cost(self):
         pass

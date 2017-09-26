@@ -7,6 +7,27 @@ class SearchAStar(Search.SearchAlgorithm):
     def __init__(self):
         super().__init__()
 
+    def search(self, initial_state_data, manhattan_distance):
+        assert isinstance(initial_state_data, Search.NodeStateData)
+        assert isinstance(manhattan_distance, bool)
+        # TODO: see if there's a better way to handle this that doesn't involve method name strings if you have time
+        heuristic = "h2cost" if manhattan_distance else "h1cost"
+        current_node = self.create_node(initial_state_data, 0, heuristic)
+        print(current_node.search_data)
+        print(current_node.state_data)
+
+    def create_node(self, state_data, gcost, heuristic):
+        search_data = NodeSearchDataAStar.__new__(NodeSearchDataAStar, gcost, getattr(state_data, heuristic))
+        search_node = SearchNodeAStar.__new__(SearchNodeAStar, search_data, state_data)
+
+        # TODO: the below two lines should not be needed
+        # TODO: also remove the print staements
+        search_node.state_data = state_data
+        search_node.search_data = search_data
+        print(search_data)
+        print(state_data)
+        return search_node
+
     def execute_search(self):
         pass
 
@@ -18,7 +39,7 @@ class SearchNodeAStar(Search.GraphSearchNode):
     """Data stored in an A* search node"""
 
     def __init__(self, search_data, state_data):
-        super().__init__(search_data, state_data)
+        super(SearchNodeAStar, self).__init__(search_data, state_data)
 
 
 class NodeSearchDataAStar(Search.NodeSearchData):

@@ -1,5 +1,5 @@
 import SearchAlgorithm as Search
-import queue
+import PriorityQueue
 
 
 class SearchAStar(Search.SearchAlgorithm):
@@ -14,23 +14,37 @@ class SearchAStar(Search.SearchAlgorithm):
         assert isinstance(manhattan_distance, bool)
         # TODO: see if there's a better way to handle this that doesn't involve method name strings if you have time
         heuristic = "h2cost" if manhattan_distance else "h1cost"
-        current_node = self.create_node(initial_state_data, 0, heuristic)
-        frontier = queue.PriorityQueue()
+        current_node = self.create_node(initial_state_data, heuristic)
+        frontier = PriorityQueue()
+        frontier.push(current_node, current_node.search_data.fcost)
+        explored = set()
 
-    # TODO: priority needs to be fcost, not hcost
+        # TODO: need to have it remember sequence of actions it took and be able to return that
+        while True:
+            if frontier.empty():
+                return None
+            current_node = frontier.get()
+            if current_node.goal_test:
+                return current_node.state_data  # TODO: return solution
+            explored.add(current_node)
+            for neighbor_node in self.__prioritize_neighbors(current_node, heuristic):
+                if not explored.__contains__(neighbor_node) and not frontier.contains(neighbor_node):
+                    frontier.push(neighbor_node, neighbor_node.search_data.fcost)
+                elif frontier.contains(neighbor_node) and (
+                            frontier.get(neighbor_node).search_data.fcost > neighbor_node.search_data.fcost):
+                    frontier.replace(neighbor_node)
+
     def __prioritize_neighbors(self, node, heuristic):
-        """Gets a list of tuples [hcost, """
+        """Gets a list of nodes [fcost, node]"""
         assert isinstance(node, SearchNodeAStar)
         neighbors = node.state_data.neighbors  # should be a tuple
         prioritized_neighbors = ()
         for neighbor in neighbors:
-            prioritized_neighbors.append([neighbor.gcost+getattr(neighbor, heuristic), neighbor])
+            prioritized_neighbors.append([neighbor.gcost + getattr(neighbor, heuristic), neighbor])
         return prioritized_neighbors
 
-    def __create_node(self, state_data, gcost, heuristic):
-        search_data = NodeSearchDataAStar(gcost, getattr(state_data, heuristic))
-        search_node = SearchNodeAStar(search_data, state_data)
-        return search_node
+    def __create_node(self, state_data, heuristic):
+        return SearchNodeAStar(NodeSearchDataAStar(state_data.gcost, getattr(state_data, heuristic)), state_data)
 
     def execute_search(self):
         pass

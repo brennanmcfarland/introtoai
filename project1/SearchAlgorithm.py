@@ -45,12 +45,25 @@ class NodeStateData(ABC, tuple):
         pass
 
     @abstractmethod
+    def goal_test(self):
+        pass
+
+    @abstractmethod
     def gcost(self):
         pass
+
     @abstractmethod
     def h1cost(self):
         pass
 
     @abstractmethod
     def h2cost(self):
+        pass
+
+    @abstractmethod
+    def __eq__(self, other):
+        pass
+
+    @abstractmethod
+    def __hash__(self):
         pass

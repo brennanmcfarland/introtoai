@@ -40,6 +40,10 @@ class NodeStateData(ABC, tuple):
         It's immutable because it inherits from tuple
     """
 
+    #@abstractmethod
+    #def __new__(cls, state, gcost=0):
+    #    pass
+
     @abstractmethod
     def neighbors(self):
         pass

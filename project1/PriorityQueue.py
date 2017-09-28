@@ -15,7 +15,10 @@ class PriorityQueue:
         heapq.heappush(self.heap, (cost, item))
 
     def pop(self):
-        return heapq.heappop(self.heap)
+        return heapq.heappop(self.heap)[1]
+
+    def peek(self):
+        return heapq.heap[0][1]
 
     def contains(self, queried_item):
         return queried_item in (item[1] for item in self.heap)
@@ -23,12 +26,12 @@ class PriorityQueue:
     # TODO: make these more efficient, again, with a hash table as mentioned above
     def get(self, queried_item):
         for item in self.heap:
-            if item == queried_item:
+            if item[1] == queried_item:
                 return item
 
     def replace(self, queried_item):
         for item in self.heap:
-            if item == queried_item:
+            if item[1] == queried_item:
                 queried_item = item
 
     def empty(self):

@@ -5,43 +5,53 @@ import math
 class EightPuzzleState(Search.NodeStateData):
     """Immutable internal representation of the eight puzzle"""
 
-    __tiles = None  # a tuple [0,1,2,3,4,5,6,7,8]
+    __tiles = None  # a tuple (0,1,2,3,4,5,6,7,8)
     # cache these values so they needn't be repeatedly calculated
     __blank_tile_index = 0
     __gcost = 0
     __num_spaces = 0
     __rows = 0
 
-    def __init__(self, tiles, gcost):
-        assert isinstance(tiles, tuple)
-        self.__tiles = tuple.__new__(tuple, tiles)
-        self.__blank_tile_index = tiles.index(0)
-        self.__num_spaces = len(self.__tiles)
-        self.__rows = math.sqrt(self.__num_spaces)
-        self.__gcost = gcost
+    # new vs init may be causing these issues
+    def __new__(cls, state, gcost=0):
+        assert isinstance(state, tuple)
+        new_puzzle = Search.NodeStateData.__new__(cls)
+        new_puzzle.__tiles = tuple.__new__(tuple, state)
+        new_puzzle.__blank_tile_index = state.index(0)
+        new_puzzle.__num_spaces = len(state)
+        new_puzzle.__rows = int(math.sqrt(new_puzzle.__num_spaces))
+        new_puzzle.__gcost = gcost
+        #super().__new__(state, gcost)
+        return new_puzzle
+
+    # def __init__(self, tiles, gcost=0):
+    #    assert isinstance(tiles, tuple)
+
 
     @property
     def neighbors(self):
-        neighbors = []
+        state_neighbors = []
         # add move left
         if self.__blank_tile_index % self.__rows > 0:
-            neighbors.append(EightPuzzleState(
-                switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index - 1), self.gcost + 1))
+            # TODO: remove test
+            test = EightPuzzleState(
+                switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index - 1), self.gcost + 1)
+            state_neighbors.append(test)
         # add move right
         if self.__blank_tile_index % self.__rows < self.__rows - 1:
-            neighbors.append(EightPuzzleState(
+            state_neighbors.append(EightPuzzleState(
                 switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index + 1), self.gcost + 1))
         # add move up
         if self.__blank_tile_index > self.__rows - 1:
-            neighbors.append(EightPuzzleState(
+            state_neighbors.append(EightPuzzleState(
                 switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index - self.__rows),
                 self.gcost + 1))
         # add move down
         if self.__blank_tile_index < self.__num_spaces - self.__rows:
-            neighbors.append(EightPuzzleState(
+            state_neighbors.append(EightPuzzleState(
                 switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index + self.__rows),
                 self.gcost + 1))
-        return neighbors
+        return tuple(state_neighbors)
 
     @property
     def goal_test(self):

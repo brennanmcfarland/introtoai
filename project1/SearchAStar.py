@@ -21,30 +21,36 @@ class SearchAStar(Search.SearchAlgorithm):
 
         # TODO: need to have it remember sequence of actions it took and be able to return that
         while True:
+            # TODO: remove this
             if frontier.empty():
                 return None
             current_node = frontier.pop()
             if current_node.state_data.goal_test:
-                return current_node.state_data  # TODO: return solution
-            explored.add(current_node)
+                return self.__build_solution(current_node.state_data)
+            if current_node not in explored:
+                explored.add(current_node)
+            print("moved ", str(current_node.state_data.last_move), " to " + str(current_node.state_data.parent),
+                  str(current_node.search_data.fcost))
             for prioritized_neighbor_node in self.__prioritize_neighbors(current_node, heuristic):
                 neighbor_node = prioritized_neighbor_node[1]
-                # TODO: delete the below two ifs
-                if frontier.contains(prioritized_neighbor_node):
-                    pass
-                # this one is the issue, looks like neighbor_node is a list
-                assert isinstance(neighbor_node, SearchNodeAStar)
-                if prioritized_neighbor_node in explored:
-                    pass
-                if not (neighbor_node in explored) and not (frontier.contains(neighbor_node)):
+                # TODO: explored has multiple values
+                if (neighbor_node not in explored) and (not frontier.contains(neighbor_node)):
                     frontier.push(neighbor_node, prioritized_neighbor_node[0])
                 elif frontier.contains(neighbor_node) and (
                             frontier.get(neighbor_node).search_data.fcost > neighbor_node.search_data.fcost):
                     frontier.replace(neighbor_node)
 
+    def __build_solution(self, goal_node_state_data):
+        """given the goal GraphSearchNode, returns a tuple of the moves from start to solution"""
+        solution_list = []
+        while goal_node_state_data.last_move is not None:
+            solution_list.append(goal_node_state_data.last_move)
+            goal_node_state_data = goal_node_state_data.parent
+        return tuple(solution_list)
+
     def __prioritize_neighbors(self, node, heuristic):
         """Gets a list of tuples (fcost, node)"""
-        assert isinstance(node, SearchNodeAStar)
+        assert isinstance(node, Search.GraphSearchNode)
         neighbors = node.state_data.neighbors  # should be a StateData object
         prioritized_neighbors = []
         for neighbor_state_data in neighbors:
@@ -53,7 +59,7 @@ class SearchAStar(Search.SearchAlgorithm):
         return prioritized_neighbors
 
     def __create_node(self, state_data, heuristic):
-        return SearchNodeAStar(NodeSearchDataAStar(state_data.gcost, getattr(state_data, heuristic)), state_data)
+        return Search.GraphSearchNode(NodeSearchDataAStar(state_data.gcost, getattr(state_data, heuristic)), state_data)
 
     def execute_search(self):
         pass
@@ -61,18 +67,6 @@ class SearchAStar(Search.SearchAlgorithm):
     def load_data(self):
         pass
 
-
-class SearchNodeAStar(Search.GraphSearchNode):
-    """Data stored in an A* search node"""
-
-    def __init__(self, search_data, state_data):
-        super(SearchNodeAStar, self).__init__(search_data, state_data)
-
-    def __hash__(self):
-        return self.state_data.__hash__()
-
-    def __eq__(self, other):
-        return self.state_data.__eq__(other.state_data)
 
 class NodeSearchDataAStar(Search.NodeSearchData):
     """Search data pertaining to the given state in the A* search, contains cost functions"""

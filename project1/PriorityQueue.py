@@ -27,7 +27,7 @@ class PriorityQueue:
     def get(self, queried_item):
         for item in self.heap:
             if item[1] == queried_item:
-                return item
+                return item[1]
 
     def replace(self, queried_item):
         for item in self.heap:

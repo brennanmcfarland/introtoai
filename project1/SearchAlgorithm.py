@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import functools
 
 
 class SearchAlgorithm(ABC):
@@ -14,6 +15,7 @@ class SearchAlgorithm(ABC):
 
 
 # TODO: make this and maybe other node-related classes inherit from tuple to make them immutable if time
+@functools.total_ordering
 class GraphSearchNode:
     """A node in a search graph"""
 
@@ -23,8 +25,20 @@ class GraphSearchNode:
     def __init__(self, search_data, state_data):
         assert isinstance(search_data, NodeSearchData)
         assert isinstance(state_data, NodeStateData)
-        self.state_data = state_data
         self.search_data = search_data
+        self.state_data = state_data
+
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return self.state_data == other.state_data
+        else:
+            return False
+
+    def __hash__(self):
+        return self.state_data.__hash__()
+
+    def __lt__(self, other):
+        return self.state_data.__lt__(other.state_data)
 
 
 class NodeSearchData(ABC):
@@ -40,8 +54,8 @@ class NodeStateData(ABC, tuple):
         It's immutable because it inherits from tuple
     """
 
-    #@abstractmethod
-    #def __new__(cls, state, gcost=0):
+    # @abstractmethod
+    # def __new__(cls, state, gcost=0, last_move=None):
     #    pass
 
     @abstractmethod
@@ -50,6 +64,14 @@ class NodeStateData(ABC, tuple):
 
     @abstractmethod
     def goal_test(self):
+        pass
+
+    @abstractmethod
+    def last_move(self):
+        pass
+
+    @abstractmethod
+    def parent(self):
         pass
 
     @abstractmethod
@@ -66,6 +88,10 @@ class NodeStateData(ABC, tuple):
 
     @abstractmethod
     def __eq__(self, other):
+        pass
+
+    @abstractmethod
+    def __lt__(self, other):
         pass
 
     @abstractmethod

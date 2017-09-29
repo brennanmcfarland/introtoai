@@ -20,8 +20,7 @@ class CommandLoop(cmd.Cmd):
 
     def __init__(self, stdin=sys.stdin):
         self.use_rawinput = False
-        sys.stdout = old_stdout
-        super().__init__(stdin=stdin, stdout=sys.stdout)
+        super().__init__(stdin=stdin, stdout=None)
 
     def do_help(self, arg):
         print("Valid commands: \n"
@@ -42,6 +41,9 @@ class CommandLoop(cmd.Cmd):
         return True
 
     def do_quit(self, arg):
+        return True
+
+    def do_EOF(self, arg):
         return True
 
     # TODO: error checking?
@@ -72,15 +74,11 @@ def process_input_arguments():
     return CommandLoop()
 
 
-old_stdout = sys.__stdout__
-try:
-    command_loop = process_input_arguments()
-    command_loop.cmdloop()
-except:
-    pass
+command_loop = process_input_arguments()
+command_loop.cmdloop()
 
 # a_star = SearchAStar()
-# initial_state = EightPuzzleState((1, 2, 5, 3, 8, 4, 6, 0, 7))
+# initial_state = EightPuzzleState((1, 2, 5, 3, 4, 8, 6, 0, 7))
 # print(initial_state)
 # result = a_star.search(initial_state, True)
 # print(result)

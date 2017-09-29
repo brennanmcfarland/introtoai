@@ -97,12 +97,12 @@ class EightPuzzleState(Search.NodeStateData):
         if isinstance(self, other):
             return self.__tiles == other.__tiles
         else:
-           return False
+            return False
 
     def __hash__(self):
         hash_value = 0
         for i in range(0, self.__num_spaces):
-            hash_value += (i+1) * self.__num_spaces * self.__tiles[i]
+            hash_value += (i + 1) * self.__num_spaces * self.__tiles[i]
         return hash_value
 
     def __lt__(self, other):

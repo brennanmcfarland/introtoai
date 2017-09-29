@@ -19,13 +19,13 @@ class SearchAStar(Search.SearchAlgorithm):
         frontier.push(current_node, current_node.search_data.fcost)
         explored = set()
 
-        # TODO: need to have it remember sequence of actions it took and be able to return that
         while True:
             # TODO: remove this
             if frontier.empty():
                 return None
             current_node = frontier.pop()
             if current_node.state_data.goal_test:
+                print(current_node.state_data)
                 return self.__build_solution(current_node.state_data)
             if current_node not in explored:
                 explored.add(current_node)
@@ -46,6 +46,7 @@ class SearchAStar(Search.SearchAlgorithm):
         while goal_node_state_data.last_move is not None:
             solution_list.append(goal_node_state_data.last_move)
             goal_node_state_data = goal_node_state_data.parent
+        solution_list.reverse()
         return tuple(solution_list)
 
     def __prioritize_neighbors(self, node, heuristic):

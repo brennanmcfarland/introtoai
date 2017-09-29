@@ -1,6 +1,8 @@
 import SearchAlgorithm as Search
 import math
 
+left, right, up, down = "left", "right", "up", "down"
+
 
 class EightPuzzleState(Search.NodeStateData):
     """Immutable internal representation of the eight puzzle"""
@@ -34,31 +36,60 @@ class EightPuzzleState(Search.NodeStateData):
 
     @property
     def neighbors(self):
-        left, right, up, down = "left", "right", "up", "down"
         state_neighbors = []
         # add move left
-        if self.__blank_tile_index % self.__rows > 0 and self.__last_move is not right:
-            # TODO: remove test
-            test = EightPuzzleState(
+        left_result = self.left
+        if left_result is not self and self.__last_move is not right:
+            state_neighbors.append(left_result)
+        # add move right
+        right_result = self.right
+        if right_result is not self and self.__last_move is not left:
+            state_neighbors.append(right_result)
+        # add move up
+        up_result = self.up
+        if up_result is not self and self.__last_move is not down:
+            state_neighbors.append(up_result)
+        # add move down
+        down_result = self.down
+        if down_result is not self and self.__last_move is not up:
+            state_neighbors.append(down_result)
+        return tuple(state_neighbors)
+
+    @property
+    def up(self):
+        if self.__blank_tile_index > self.__rows - 1:
+            return EightPuzzleState(
+                switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index - self.__rows),
+                self.gcost + 1, up, self)
+        else:
+            return self
+
+    @property
+    def down(self):
+        if self.__blank_tile_index < self.__num_spaces - self.__rows:
+            return EightPuzzleState(
+                switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index + self.__rows),
+                self.gcost + 1, down, self)
+        else:
+            return self
+
+    @property
+    def left(self):
+        if self.__blank_tile_index % self.__rows > 0:
+            return EightPuzzleState(
                 switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index - 1),
                 self.gcost + 1, left, self)
-            state_neighbors.append(test)
-        # add move right
-        if self.__blank_tile_index % self.__rows < self.__rows - 1 and self.__last_move is not left:
-            state_neighbors.append(EightPuzzleState(
+        else:
+            return self
+
+    @property
+    def right(self):
+        if self.__blank_tile_index % self.__rows < self.__rows - 1:
+            return EightPuzzleState(
                 switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index + 1),
-                self.gcost + 1, right, self))
-        # add move up
-        if self.__blank_tile_index > self.__rows - 1 and self.__last_move is not down:
-            state_neighbors.append(EightPuzzleState(
-                switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index - self.__rows),
-                self.gcost + 1, up, self))
-        # add move down
-        if self.__blank_tile_index < self.__num_spaces - self.__rows and self.__last_move is not up:
-            state_neighbors.append(EightPuzzleState(
-                switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index + self.__rows),
-                self.gcost + 1, down, self))
-        return tuple(state_neighbors)
+                self.gcost + 1, right, self)
+        else:
+            return self
 
     @property
     def goal_test(self):

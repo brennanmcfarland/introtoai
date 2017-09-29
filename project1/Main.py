@@ -46,6 +46,28 @@ class CommandLoop(cmd.Cmd):
             self.puzzle_state = current_neighbors[random_neighbor_index]
         self.print_state()
 
+    def do_printState(self, arg):
+        """Print the current state of the puzzle"""
+        self.print_state()
+
+    def do_move(self, direction):
+        """Make a move in the specified direction"""
+        if self.mode != Mode.EIGHT_PUZZLE:
+            print("Cannot make move outside of eight-puzzle mode")
+            return
+        elif direction == "left":
+            self.puzzle_state = self.puzzle_state.left
+        elif direction == "right":
+            self.puzzle_state = self.puzzle_state.right
+        elif direction == "up":
+            self.puzzle_state = self.puzzle_state.up
+        elif direction == "down":
+            self.puzzle_state = self.puzzle_state.down
+        else:
+            print("Invalid move")
+            return
+        self.print_state()
+
     def do_solve(self, algorithm_string):
         """Solve the current state with the given algorithm (and heuristic if it is required to specify)"""
         algorithm_args = algorithm_string.split()

@@ -2,6 +2,7 @@ import SearchAlgorithm as Search
 from PriorityQueue import PriorityQueue
 
 
+# TODO: it's solving suboptimally in some cases, figure out why (it may be the extra checks you put in)
 class SearchAStar(Search.SearchAlgorithm):
     """Command pattern class for the A* search algorithm"""
 
@@ -25,12 +26,12 @@ class SearchAStar(Search.SearchAlgorithm):
                 return None
             current_node = frontier.pop()
             if current_node.state_data.goal_test:
-                print(current_node.state_data)
+                # print(current_node.state_data)
                 return self.__build_solution(current_node.state_data)
             if current_node not in explored:
                 explored.add(current_node)
-            print("moved ", str(current_node.state_data.last_move), " to " + str(current_node.state_data.parent),
-                  str(current_node.search_data.fcost))
+            # print("moved ", str(current_node.state_data.last_move), " to " + str(current_node.state_data.parent),
+            #       str(current_node.search_data.fcost))
             for prioritized_neighbor_node in self.__prioritize_neighbors(current_node, heuristic):
                 neighbor_node = prioritized_neighbor_node[1]
                 # TODO: explored has multiple values

@@ -1,1 +1,2 @@
-setState b12 345 678
+setState 142 375 68b
+solve A-star h2

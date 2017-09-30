@@ -2,15 +2,13 @@ import SearchAlgorithm as Search
 from PriorityQueue import PriorityQueue
 
 
-# TODO: it's solving suboptimally in some cases, figure out why (it may be the extra checks you put in)
-# the internet says any solvable 8-puzzle can be done in 31 moves or less
 class SearchAStar(Search.SearchAlgorithm):
     """Command pattern class for the A* search algorithm"""
 
     def __init__(self):
         super().__init__()
 
-    def search(self, initial_state_data, manhattan_distance):
+    def search(self, initial_state_data, manhattan_distance, max_nodes=0):
         # TODO: move initialization to a separate private method
         assert isinstance(initial_state_data, Search.NodeStateData)
         assert isinstance(manhattan_distance, bool)
@@ -23,7 +21,7 @@ class SearchAStar(Search.SearchAlgorithm):
 
         while True:
             # TODO: remove this
-            if frontier.empty():
+            if frontier.empty() or (0 < max_nodes <= len(frontier) + len(explored)):
                 return None
             current_node = frontier.pop()
             if current_node.state_data.goal_test:

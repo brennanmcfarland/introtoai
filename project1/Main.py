@@ -19,6 +19,7 @@ class CommandLoop(cmd.Cmd):
 
     mode = Mode.EIGHT_PUZZLE
     puzzle_state = None
+    max_nodes = 0
 
     def __init__(self, stdin=sys.stdin):
         random.seed(4096) # as specified in the assignment, the seed is set to a static value
@@ -81,14 +82,22 @@ class CommandLoop(cmd.Cmd):
             result = self.solve_A_star(algorithm_args[1])
         elif algorithm_args[0] == "beam":
             try:
-                result = SearchLocalBeam().search(self.puzzle_state, int(algorithm_args[1]))
+                result = SearchLocalBeam().search(self.puzzle_state, int(algorithm_args[1]), self.max_nodes)
             except ValueError:
                 self.print_help()
         else:
             self.print_help()
-        if result is not None:
+        if result:
             print(len(result), "moves: ", result)
+        else:
+            print("Max search nodes exceeded")
+        self.puzzle_state = EightPuzzleState(self.puzzle_state.get_tiles())
 
+    def do_maxNodes(self, max_nodes):
+        try:
+            self.max_nodes = int(max_nodes)
+        except ValueError:
+            self.print_help()
     def do_stop(self, arg):
         return True
 
@@ -122,9 +131,9 @@ class CommandLoop(cmd.Cmd):
     def solve_A_star(self, heuristic_string):
         """Solves the current puzzle state with A* using either h1 or h2 depending on input"""
         if heuristic_string == "h1":
-            return SearchAStar().search(self.puzzle_state, False)
+            return SearchAStar().search(self.puzzle_state, False, self.max_nodes)
         elif heuristic_string == "h2":
-            return SearchAStar().search(self.puzzle_state, True)
+            return SearchAStar().search(self.puzzle_state, True, self.max_nodes)
         else:
             self.print_help()
             return None

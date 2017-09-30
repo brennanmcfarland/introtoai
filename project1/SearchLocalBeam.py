@@ -8,7 +8,7 @@ class SearchLocalBeam(Search.SearchAlgorithm):
     def __init__(self):
         super().__init__()
 
-    def search(self, initial_state_data, k):
+    def search(self, initial_state_data, k, max_nodes=0):
         # TODO: move initialization to a separate private method
         assert isinstance(initial_state_data, Search.NodeStateData)
         assert isinstance(k, int)
@@ -17,20 +17,25 @@ class SearchLocalBeam(Search.SearchAlgorithm):
         explored = PriorityQueue()
         frontier = PriorityQueue()
         explored.push(current_node, current_node.search_data.hcost)
+        node_count = 0
 
+        # TODO: I think it's an issue with the heuristic being ineffective rather than the algorithm itself
         while True:
             if explored.empty():
                 return None
-            if current_node.state_data.goal_test:
-                return Search.build_solution(current_node.state_data)
             while not explored.empty():
                 print("moved ", str(current_node.state_data.last_move), " to " + str(current_node.state_data.parent),
                       str(current_node.search_data.hcost))
                 current_node = explored.pop()
+                if current_node.state_data.goal_test:
+                    return Search.build_solution(current_node.state_data)
                 # TODO: need to implement my own heuristic instead of just reusing h2cost
                 for prioritized_neighbor_node in self.__prioritize_neighbors(current_node):
                     neighbor_node = prioritized_neighbor_node[1]
                     frontier.push(neighbor_node, prioritized_neighbor_node[0])
+                    node_count += 1
+                    if 0 < max_nodes <= node_count:
+                        return None
             # get the k best moves and put them in explored, clearing frontier
             explored = frontier.truncate(k)
             frontier.clear()

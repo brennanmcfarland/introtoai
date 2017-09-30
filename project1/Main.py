@@ -13,7 +13,9 @@ class Mode(Enum):
 
 
 class CommandLoop(cmd.Cmd):
-    """The main command loop.  Note that methods are required to be in the format do_<command syntax> to work."""
+    """The main command loop.  Note that methods are required to be in the format do_<command syntax> to work.
+    do_commandName executes whenever commandName is typed in, with any arguments automatically parsed from the
+    input string."""
 
     mode = Mode.EIGHT_PUZZLE
     puzzle_state = None
@@ -44,7 +46,7 @@ class CommandLoop(cmd.Cmd):
             current_neighbors = self.puzzle_state.neighbors
             random_neighbor_index = random.randint(0, len(current_neighbors)-1)
             self.puzzle_state = current_neighbors[random_neighbor_index]
-            self.puzzle_state = EightPuzzleState(self.puzzle_state.get_tiles())
+            self.puzzle_state = EightPuzzleState(self.puzzle_state.get_tiles()) # resets the state's parent & last move
         self.print_state()
 
     def do_printState(self, arg):
@@ -73,7 +75,7 @@ class CommandLoop(cmd.Cmd):
         """Solve the current state with the given algorithm (and heuristic if it is required to specify)"""
         algorithm_args = algorithm_string.split()
         result = None
-        if len(algorithm_args) != 2:
+        if len(algorithm_args) != 2: # argument 1: algorithm, argument 2: heuristic/k
             self.print_help()
             return
         elif algorithm_args[0] == "A-star":
@@ -109,6 +111,7 @@ class CommandLoop(cmd.Cmd):
         return True
 
     def do_EOF(self, arg):
+        """When read from a file, the cmd must be told how to deal with an EOF"""
         return True
 
     def set_eight_puzzle_state(self, state_string):

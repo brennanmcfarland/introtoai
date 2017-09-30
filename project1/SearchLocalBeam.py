@@ -12,28 +12,30 @@ class SearchLocalBeam(Search.SearchAlgorithm):
         assert isinstance(initial_state_data, Search.NodeStateData)
         assert isinstance(k, int)
         current_node = self.__create_node(initial_state_data)
-        explored = PriorityQueue()
-        frontier = PriorityQueue()
-        frontier_successors = PriorityQueue()
-        frontier.push(current_node, current_node.search_data.hcost)
+        explored = PriorityQueue()  # the nodes we've already looked at
+        frontier = PriorityQueue()  # the nodes we're looking at now
+        frontier_successors = PriorityQueue()  # successors of the nodes we're looking at now
+        frontier.push(current_node, current_node.search_data.hcost)  # add the first node to the frontier
         node_count = 0
 
         while True:
-            if frontier.empty():
+            if frontier.empty():  # failure
                 return None
-            while not frontier.empty():
-                print("moved ", str(current_node.state_data.last_move), " to " + str(current_node.state_data.parent),
-                      str(current_node.search_data.hcost))
+            while not frontier.empty():  # for every node in the frontier, expand it and pick the k best successors
+                #  print("moved ", str(current_node.state_data.last_move), " to " + str(current_node.state_data.parent),
+                #  str(current_node.search_data.hcost))
+                # get the next frontier node and mark it as explored
                 current_node = frontier.pop()
                 explored.push(current_node, current_node.search_data.hcost)
-                if current_node.state_data.goal_test:
+                if current_node.state_data.goal_test:  # success
                     return Search.build_solution(current_node.state_data)
+                # expand unexplored neighbors
                 for prioritized_neighbor_node in self.__prioritize_neighbors(current_node):
                     neighbor_node = prioritized_neighbor_node[1]
                     if not explored.contains(neighbor_node):
                         frontier_successors.push(neighbor_node, prioritized_neighbor_node[0])
                         node_count += 1
-                        if 0 < max_nodes <= node_count:
+                        if 0 < max_nodes <= node_count:  # failure
                             return None
             # get the k best moves and put them in explored, clearing frontier
             frontier = frontier_successors.truncate(k)

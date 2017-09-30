@@ -7,7 +7,8 @@ left, right, up, down = "left", "right", "up", "down"
 
 
 class EightPuzzleState(Search.NodeStateData):
-    """Immutable internal representation of the eight puzzle"""
+    """Immutable internal representation of the eight puzzle.  The state itself is stored with the row/column positions
+     flattened as a tuple with 0 for the blank space. Equality, hashing, etc, is all based on this tuple."""
 
     __tiles = None  # a tuple (0,1,2,3,4,5,6,7,8)
     __last_move = None
@@ -29,17 +30,14 @@ class EightPuzzleState(Search.NodeStateData):
         new_puzzle.__gcost = gcost
         new_puzzle.__last_move = last_move
         new_puzzle.__parent = parent
-        # super().__new__(state, gcost)
         return new_puzzle
 
     def get_tiles(self):
         return copy.copy(self.__tiles)
-    # def __init__(self, tiles, gcost=0):
-    #    assert isinstance(tiles, tuple)
-
 
     @property
     def neighbors(self):
+        """Gets all states immediately reachable rom this state that was not the last state (hence __last_move)"""
         state_neighbors = []
         # add move left
         left_result = self.left
@@ -61,6 +59,7 @@ class EightPuzzleState(Search.NodeStateData):
 
     @property
     def up(self):
+        """Get the state reached from moving up, this state if not possible"""
         if self.__blank_tile_index > self.__rows - 1:
             return EightPuzzleState(
                 switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index - self.__rows),
@@ -70,6 +69,8 @@ class EightPuzzleState(Search.NodeStateData):
 
     @property
     def down(self):
+        """Get the state reached from moving down, this state if not possible"""
+
         if self.__blank_tile_index < self.__num_spaces - self.__rows:
             return EightPuzzleState(
                 switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index + self.__rows),
@@ -79,6 +80,8 @@ class EightPuzzleState(Search.NodeStateData):
 
     @property
     def left(self):
+        """Get the state reached from moving left, this state if not possible"""
+
         if self.__blank_tile_index % self.__rows > 0:
             return EightPuzzleState(
                 switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index - 1),
@@ -88,6 +91,8 @@ class EightPuzzleState(Search.NodeStateData):
 
     @property
     def right(self):
+        """Get the state reached from moving right, this state if not possible"""
+
         if self.__blank_tile_index % self.__rows < self.__rows - 1:
             return EightPuzzleState(
                 switch_in_tuple(self.__tiles, self.__blank_tile_index, self.__blank_tile_index + 1),
@@ -113,6 +118,7 @@ class EightPuzzleState(Search.NodeStateData):
 
     @property
     def h1cost(self):
+        """Number of out-of-place tiles"""
         tiles = self.__tiles
         hcost = 0
         for tile_index in range(len(tiles)):
@@ -122,6 +128,7 @@ class EightPuzzleState(Search.NodeStateData):
 
     @property
     def h2cost(self):
+        """Sum of each tile's distance from its goal state"""
         tiles = self.__tiles
         hcost = 0
         for tile_index in range(len(tiles)):

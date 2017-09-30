@@ -1,9 +1,9 @@
 import heapq
 
 
-# TODO: if time, combine with hash table functionality for quicker retrieval of an element in the set
 class PriorityQueue:
-    """An implementation of the priority queue, since the standard lib's implementation is built for scheduling"""
+    """An implementation of the priority queue, since the standard lib's implementation is built for scheduling.
+    Uses heapq."""
 
     def __init__(self, heap_list=[]):
         self.heap = list(heap_list)
@@ -23,7 +23,6 @@ class PriorityQueue:
     def contains(self, queried_item):
         return queried_item in (item[1] for item in self.heap)
 
-    # TODO: make these more efficient, again, with a hash table as mentioned above
     def get(self, queried_item):
         for item in self.heap:
             if item[1] == queried_item:

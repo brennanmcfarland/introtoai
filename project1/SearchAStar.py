@@ -13,21 +13,21 @@ class SearchAStar(Search.SearchAlgorithm):
         assert isinstance(manhattan_distance, bool)
         heuristic = "h2cost" if manhattan_distance else "h1cost"
         current_node = self.__create_node(initial_state_data, heuristic)
-        frontier = PriorityQueue()
+        frontier = PriorityQueue()  # nodes we're looking at now
         frontier.push(current_node, current_node.search_data.fcost)
-        explored = set()
+        explored = set()  # nodes we've looked at and needn't again
 
         while True:
-            if frontier.empty() or (0 < max_nodes <= len(frontier) + len(explored)):
+            if frontier.empty() or (0 < max_nodes <= len(frontier) + len(explored)):  # failure
                 return None
             current_node = frontier.pop()
-            if current_node.state_data.goal_test:
-                # print(current_node.state_data)
+            if current_node.state_data.goal_test:  # success
                 return Search.build_solution(current_node.state_data)
-            if current_node not in explored:
+            if current_node not in explored:  # mark the current node as explored if not already
                 explored.add(current_node)
-            print("moved ", str(current_node.state_data.last_move), " to " + str(current_node.state_data.parent),
-                  str(current_node.search_data.fcost))
+                # print("moved ", str(current_node.state_data.last_move), " to " + str(current_node.state_data.parent),
+                # str(current_node.search_data.fcost))
+            # expand unexplored neighbors, updating their path cost if a better one is found
             for prioritized_neighbor_node in self.__prioritize_neighbors(current_node, heuristic):
                 neighbor_node = prioritized_neighbor_node[1]
                 if (neighbor_node not in explored) and (not frontier.contains(neighbor_node)):

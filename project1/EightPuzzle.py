@@ -1,3 +1,5 @@
+import copy
+
 import SearchAlgorithm as Search
 import math
 
@@ -30,6 +32,8 @@ class EightPuzzleState(Search.NodeStateData):
         # super().__new__(state, gcost)
         return new_puzzle
 
+    def get_tiles(self):
+        return copy.copy(self.__tiles)
     # def __init__(self, tiles, gcost=0):
     #    assert isinstance(tiles, tuple)
 
@@ -39,19 +43,19 @@ class EightPuzzleState(Search.NodeStateData):
         state_neighbors = []
         # add move left
         left_result = self.left
-        if left_result is not self and self.__last_move is not right:
+        if left_result is not self and self.__last_move != right:
             state_neighbors.append(left_result)
         # add move right
         right_result = self.right
-        if right_result is not self and self.__last_move is not left:
+        if right_result is not self and self.__last_move != left:
             state_neighbors.append(right_result)
         # add move up
         up_result = self.up
-        if up_result is not self and self.__last_move is not down:
+        if up_result is not self and self.__last_move != down:
             state_neighbors.append(up_result)
         # add move down
         down_result = self.down
-        if down_result is not self and self.__last_move is not up:
+        if down_result is not self and self.__last_move != up:
             state_neighbors.append(down_result)
         return tuple(state_neighbors)
 

@@ -6,7 +6,7 @@ class PriorityQueue:
     """An implementation of the priority queue, since the standard lib's implementation is built for scheduling"""
 
     def __init__(self, heap_list=[]):
-        self.heap = heap_list
+        self.heap = list(heap_list)
 
     def __len__(self):
         return len(self.heap)

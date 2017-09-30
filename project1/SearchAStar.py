@@ -31,8 +31,8 @@ class SearchAStar(Search.SearchAlgorithm):
                 return Search.build_solution(current_node.state_data)
             if current_node not in explored:
                 explored.add(current_node)
-            # print("moved ", str(current_node.state_data.last_move), " to " + str(current_node.state_data.parent),
-            #       str(current_node.search_data.fcost))
+            print("moved ", str(current_node.state_data.last_move), " to " + str(current_node.state_data.parent),
+                  str(current_node.search_data.fcost))
             for prioritized_neighbor_node in self.__prioritize_neighbors(current_node, heuristic):
                 neighbor_node = prioritized_neighbor_node[1]
                 if (neighbor_node not in explored) and (not frontier.contains(neighbor_node)):

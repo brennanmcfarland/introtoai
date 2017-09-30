@@ -45,6 +45,7 @@ class CommandLoop(cmd.Cmd):
             current_neighbors = self.puzzle_state.neighbors
             random_neighbor_index = random.randint(0, len(current_neighbors)-1)
             self.puzzle_state = current_neighbors[random_neighbor_index]
+            self.puzzle_state = EightPuzzleState(self.puzzle_state.get_tiles())
         self.print_state()
 
     def do_printState(self, arg):

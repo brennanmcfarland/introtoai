@@ -2,6 +2,7 @@ import cmd
 import sys
 import random
 from SearchAStar import SearchAStar
+from SearchLocalBeam import SearchLocalBeam
 from EightPuzzle import EightPuzzleState
 from enum import Enum
 
@@ -71,19 +72,21 @@ class CommandLoop(cmd.Cmd):
     def do_solve(self, algorithm_string):
         """Solve the current state with the given algorithm (and heuristic if it is required to specify)"""
         algorithm_args = algorithm_string.split()
-        if len(algorithm_args) == 0:
+        result = None
+        if len(algorithm_args) != 2:
             self.print_help()
             return
-        if algorithm_args[0] == "A-star":
-            if len(algorithm_args) != 2:
+        elif algorithm_args[0] == "A-star":
+            result = self.solve_A_star(algorithm_args[1])
+        elif algorithm_args[0] == "beam":
+            try:
+                result = SearchLocalBeam().search(self.puzzle_state, int(algorithm_args[1]))
+            except ValueError:
                 self.print_help()
-                return
-            else:
-                result = self.solve_A_star(algorithm_args[1])
-                if result is not None:
-                    print(len(result), "moves: ", result)
         else:
             self.print_help()
+        if result is not None:
+            print(len(result), "moves: ", result)
 
     def do_stop(self, arg):
         return True

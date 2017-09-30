@@ -97,3 +97,13 @@ class NodeStateData(ABC, tuple):
     @abstractmethod
     def __hash__(self):
         pass
+
+
+def build_solution(goal_node_state_data):
+    """given the goal GraphSearchNode, returns a tuple of the moves from start to solution"""
+    solution_list = []
+    while goal_node_state_data.last_move is not None:
+        solution_list.append(goal_node_state_data.last_move)
+        goal_node_state_data = goal_node_state_data.parent
+    solution_list.reverse()
+    return tuple(solution_list)

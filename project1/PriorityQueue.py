@@ -5,8 +5,8 @@ import heapq
 class PriorityQueue:
     """An implementation of the priority queue, since the standard lib's implementation is built for scheduling"""
 
-    def __init__(self):
-        self.heap = []
+    def __init__(self, heap_list=[]):
+        self.heap = heap_list
 
     def __len__(self):
         return len(self.heap)
@@ -18,7 +18,7 @@ class PriorityQueue:
         return heapq.heappop(self.heap)[1]
 
     def peek(self):
-        return heapq.heap[0][1]
+        return self.heap[0][1]
 
     def contains(self, queried_item):
         return queried_item in (item[1] for item in self.heap)
@@ -40,3 +40,10 @@ class PriorityQueue:
     def clear(self):
         while not (self.empty()):
             self.pop()
+
+    def truncate(self, n):
+        """Return a new priority queue with only the n best values from this one"""
+        heap_list = list(self.heap).copy()
+        heap_list = heap_list[:n]
+        heapq.heapify(heap_list)
+        return PriorityQueue(heap_list)

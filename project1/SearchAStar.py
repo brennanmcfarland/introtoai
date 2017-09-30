@@ -3,6 +3,7 @@ from PriorityQueue import PriorityQueue
 
 
 # TODO: it's solving suboptimally in some cases, figure out why (it may be the extra checks you put in)
+# the internet says any solvable 8-puzzle can be done in 31 moves or less
 class SearchAStar(Search.SearchAlgorithm):
     """Command pattern class for the A* search algorithm"""
 
@@ -27,33 +28,23 @@ class SearchAStar(Search.SearchAlgorithm):
             current_node = frontier.pop()
             if current_node.state_data.goal_test:
                 # print(current_node.state_data)
-                return self.__build_solution(current_node.state_data)
+                return Search.build_solution(current_node.state_data)
             if current_node not in explored:
                 explored.add(current_node)
             # print("moved ", str(current_node.state_data.last_move), " to " + str(current_node.state_data.parent),
             #       str(current_node.search_data.fcost))
             for prioritized_neighbor_node in self.__prioritize_neighbors(current_node, heuristic):
                 neighbor_node = prioritized_neighbor_node[1]
-                # TODO: explored has multiple values
                 if (neighbor_node not in explored) and (not frontier.contains(neighbor_node)):
                     frontier.push(neighbor_node, prioritized_neighbor_node[0])
                 elif frontier.contains(neighbor_node) and (
                             frontier.get(neighbor_node).search_data.fcost > neighbor_node.search_data.fcost):
                     frontier.replace(neighbor_node)
 
-    def __build_solution(self, goal_node_state_data):
-        """given the goal GraphSearchNode, returns a tuple of the moves from start to solution"""
-        solution_list = []
-        while goal_node_state_data.last_move is not None:
-            solution_list.append(goal_node_state_data.last_move)
-            goal_node_state_data = goal_node_state_data.parent
-        solution_list.reverse()
-        return tuple(solution_list)
-
     def __prioritize_neighbors(self, node, heuristic):
         """Gets a list of tuples (fcost, node)"""
         assert isinstance(node, Search.GraphSearchNode)
-        neighbors = node.state_data.neighbors  # should be a StateData object
+        neighbors = node.state_data.neighbors
         prioritized_neighbors = []
         for neighbor_state_data in neighbors:
             neighbor_node = self.__create_node(neighbor_state_data, heuristic)

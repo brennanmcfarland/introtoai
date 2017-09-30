@@ -142,7 +142,6 @@ class EightPuzzleState(Search.NodeStateData):
     def __str__(self):
         return str(self.__tiles)
 
-
 def switch_in_tuple(tuple_to_permute, i, j):
     """return the given tuple with the elements at indices i and j switched"""
     list_to_permute = list(tuple_to_permute)

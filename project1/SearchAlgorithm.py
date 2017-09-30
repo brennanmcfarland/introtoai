@@ -6,15 +6,10 @@ class SearchAlgorithm(ABC):
     """Abstract base class for all search algorithms; uses the command pattern"""
 
     @abstractmethod
-    def load_data(self):
-        pass
-
-    @abstractmethod
-    def execute_search(self):
+    def search(self, initial_state_data, heuristics_param, max_nodes):
         pass
 
 
-# TODO: make this and maybe other node-related classes inherit from tuple to make them immutable if time
 @functools.total_ordering
 class GraphSearchNode:
     """A node in a search graph"""
@@ -53,10 +48,6 @@ class NodeStateData(ABC, tuple):
         The abstract methods defined here require the state to be able to generate the needed search data
         It's immutable because it inherits from tuple
     """
-
-    # @abstractmethod
-    # def __new__(cls, state, gcost=0, last_move=None):
-    #    pass
 
     @abstractmethod
     def neighbors(self):

@@ -15,8 +15,6 @@ class Mode(Enum):
 class CommandLoop(cmd.Cmd):
     """The main command loop.  Note that methods are required to be in the format do_<command syntax> to work."""
 
-    # TODO: commands should always operate on the current puzzle state, so make sure there's always one and only one such state
-
     mode = Mode.EIGHT_PUZZLE
     puzzle_state = None
     max_nodes = 0
@@ -40,7 +38,7 @@ class CommandLoop(cmd.Cmd):
         try:
             move_count = int(move_count_string)
         except ValueError:
-            self.print_help() # TODO: can I convert these to just return self.print_help()?
+            self.print_help()
             return
         for move_index in range(0, move_count):
             current_neighbors = self.puzzle_state.neighbors
@@ -113,7 +111,6 @@ class CommandLoop(cmd.Cmd):
     def do_EOF(self, arg):
         return True
 
-    # TODO: error checking?
     def set_eight_puzzle_state(self, state_string):
         """Takes a string in the format b12 345 678 and returns the corresponding eight puzzle state"""
         state_list = []
@@ -160,9 +157,3 @@ def process_input_arguments():
 
 command_loop = process_input_arguments()
 command_loop.cmdloop()
-
-# a_star = SearchAStar()
-# initial_state = EightPuzzleState((1, 2, 5, 3, 4, 8, 6, 0, 7))
-# print(initial_state)
-# result = a_star.search(initial_state, True)
-# print(result)

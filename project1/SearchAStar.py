@@ -9,10 +9,8 @@ class SearchAStar(Search.SearchAlgorithm):
         super().__init__()
 
     def search(self, initial_state_data, manhattan_distance, max_nodes=0):
-        # TODO: move initialization to a separate private method
         assert isinstance(initial_state_data, Search.NodeStateData)
         assert isinstance(manhattan_distance, bool)
-        # TODO: see if there's a better way to handle this that doesn't involve method name strings if you have time
         heuristic = "h2cost" if manhattan_distance else "h1cost"
         current_node = self.__create_node(initial_state_data, heuristic)
         frontier = PriorityQueue()
@@ -20,7 +18,6 @@ class SearchAStar(Search.SearchAlgorithm):
         explored = set()
 
         while True:
-            # TODO: remove this
             if frontier.empty() or (0 < max_nodes <= len(frontier) + len(explored)):
                 return None
             current_node = frontier.pop()
@@ -51,12 +48,6 @@ class SearchAStar(Search.SearchAlgorithm):
 
     def __create_node(self, state_data, heuristic):
         return Search.GraphSearchNode(NodeSearchDataAStar(state_data.gcost, getattr(state_data, heuristic)), state_data)
-
-    def execute_search(self):
-        pass
-
-    def load_data(self):
-        pass
 
 
 class NodeSearchDataAStar(Search.NodeSearchData):

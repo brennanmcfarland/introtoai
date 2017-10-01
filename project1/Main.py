@@ -1,6 +1,7 @@
 import cmd
 import sys
 import random
+import time
 from SearchAStar import SearchAStar
 from SearchLocalBeam import SearchLocalBeam
 from EightPuzzle import EightPuzzleState
@@ -73,6 +74,7 @@ class CommandLoop(cmd.Cmd):
 
     def do_solve(self, algorithm_string):
         """Solve the current state with the given algorithm (and heuristic if it is required to specify)"""
+        start_time = time.time()
         algorithm_args = algorithm_string.split()
         result = None
         if len(algorithm_args) != 2: # argument 1: algorithm, argument 2: heuristic/k
@@ -87,8 +89,10 @@ class CommandLoop(cmd.Cmd):
                 self.print_help()
         else:
             self.print_help()
-        if result:
-            print(len(result), "moves: ", result)
+        if result == "already in goal state":
+            print(result)
+        elif result:
+            print(len(result), "moves: ", result, " in ", time.time()-start_time, " seconds")
         else:
             print("Max search nodes exceeded")
         self.puzzle_state = EightPuzzleState(self.puzzle_state.get_tiles())

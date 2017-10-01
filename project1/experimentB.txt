@@ -1,0 +1,3 @@
+randomizeState 50
+solve A-star h1
+solve A-star h2

@@ -1,0 +1,9 @@
+maxNodes 100
+setState b12 345 678
+solve A-star h2
+solve beam 3
+setState 32b 415 678
+solve A-star h1
+solve beam 3
+setState 123 456 b78
+solve A-star h2

@@ -1,0 +1,16 @@
+maxNodes 10000
+setState b12 345 678
+randomizeState 50
+solve A-star h1
+setState b12 345 678
+randomizeState 50
+solve A-star h1
+setState b12 345 678
+randomizeState 50
+solve A-star h1
+setState b12 345 678
+randomizeState 50
+solve A-star h1
+setState b12 345 678
+randomizeState 50
+solve A-star h1

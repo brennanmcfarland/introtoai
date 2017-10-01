@@ -92,6 +92,8 @@ class NodeStateData(ABC, tuple):
 
 def build_solution(goal_node_state_data):
     """given the goal GraphSearchNode, returns a tuple of the moves from start to solution"""
+    if goal_node_state_data.last_move is None:
+        return "already in goal state"
     solution_list = []
     while goal_node_state_data.last_move is not None:
         solution_list.append(goal_node_state_data.last_move)

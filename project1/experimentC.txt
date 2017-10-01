@@ -1,0 +1,3 @@
+randomizeState 22
+solve A-star h2
+solve beam 6

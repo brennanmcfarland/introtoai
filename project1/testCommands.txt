@@ -1,2 +1,0 @@
-setState 142 375 68b
-solve A-star h2

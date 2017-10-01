@@ -37,8 +37,7 @@ class PriorityQueue:
         return len(self.heap) == 0
 
     def clear(self):
-        while not (self.empty()):
-            self.pop()
+        self.heap = list([])
 
     def truncate(self, n):
         """Return a new priority queue with only the n best values from this one"""

@@ -73,20 +73,10 @@ class CommandLoop(cmd.Cmd):
 
     def do_move(self, direction):
         """Make a move in the specified direction"""
-        if self.mode != Mode.EIGHT_PUZZLE:
-            print("Cannot make move outside of eight-puzzle mode")
-            return
-        elif direction == "left":
-            self.puzzle_state = self.puzzle_state.left
-        elif direction == "right":
-            self.puzzle_state = self.puzzle_state.right
-        elif direction == "up":
-            self.puzzle_state = self.puzzle_state.up
-        elif direction == "down":
-            self.puzzle_state = self.puzzle_state.down
+        if self.mode == Mode.EIGHT_PUZZLE:
+            self.move_8_puzzle(direction)
         else:
-            print("Invalid move")
-            return
+            self.move_pocket_cube(direction)
         self.print_state()
 
     def do_solve(self, algorithm_string):
@@ -161,6 +151,34 @@ class CommandLoop(cmd.Cmd):
         else:
             self.print_help()
             return None
+
+    def move_8_puzzle(self, direction):
+        """Make a move in the specified direction"""
+        if direction == "left":
+            self.puzzle_state = self.puzzle_state.left
+        elif direction == "right":
+            self.puzzle_state = self.puzzle_state.right
+        elif direction == "up":
+            self.puzzle_state = self.puzzle_state.up
+        elif direction == "down":
+            self.puzzle_state = self.puzzle_state.down
+        else:
+            print("Invalid move")
+            return
+
+    def move_pocket_cube(self, direction):
+        """Make a move in the specified direction"""
+        if direction == "r":
+            self.puzzle_state = self.puzzle_state.r
+        elif direction == "r'":
+            self.puzzle_state = self.puzzle_state.rprime
+        elif direction == "d":
+            self.puzzle_state = self.puzzle_state.d
+        elif direction == "d'":
+            self.puzzle_state = self.puzzle_state.dprime
+        else:
+            print("Invalid move")
+            return
 
     def print_state(self):
         print(self.puzzle_state)

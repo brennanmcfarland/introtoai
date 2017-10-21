@@ -78,6 +78,10 @@ class NodeStateData(ABC, tuple):
         pass
 
     @abstractmethod
+    def get_tiles(self):
+        pass
+
+    @abstractmethod
     def __eq__(self, other):
         pass
 

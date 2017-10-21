@@ -135,6 +135,9 @@ class EightPuzzleState(Search.NodeStateData):
             hcost += abs(tile_index - tiles[tile_index])
         return hcost
 
+    def index(self, element):
+        return self.__tiles.index(element)
+
     def __eq__(self, other):
         if isinstance(self, other):
             return self.__tiles == other.__tiles
@@ -152,6 +155,7 @@ class EightPuzzleState(Search.NodeStateData):
 
     def __str__(self):
         return str(self.__tiles)
+
 
 def switch_in_tuple(tuple_to_permute, i, j):
     """return the given tuple with the elements at indices i and j switched"""

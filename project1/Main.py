@@ -5,6 +5,7 @@ import time
 from SearchAStar import SearchAStar
 from SearchLocalBeam import SearchLocalBeam
 from EightPuzzle import EightPuzzleState
+from PocketCube import PocketCubeState
 from enum import Enum
 
 
@@ -24,16 +25,27 @@ class CommandLoop(cmd.Cmd):
 
     def __init__(self, stdin=sys.stdin):
         random.seed(4096) # as specified in the assignment, the seed is set to a static value
-        self.puzzle_state = self.set_eight_puzzle_state("b12 345 678")
+        self.do_setMode("8-puzzle")
         self.use_rawinput = False
         super().__init__(stdin=stdin, stdout=None)
 
     def do_help(self, arg):
         self.print_help()
 
+    def do_setMode(self, mode_string):
+        if mode_string == "8-puzzle":
+            self.mode = Mode.EIGHT_PUZZLE
+            self.puzzle_state = self.set_eight_puzzle_state("b12 345 678")
+        elif mode_string == "pocket-cube":
+            self.mode = Mode.POCKET_CUBE
+            self.puzzle_state = self.set_pocket_cube_state("wwww yyoo rrgg yyoo rrgg bbbb")
+
     def do_setState(self, state_string):
         """Set the state"""
-        self.puzzle_state = self.set_eight_puzzle_state(state_string)
+        if self.mode == Mode.EIGHT_PUZZLE:
+            self.puzzle_state = self.set_eight_puzzle_state(state_string)
+        else:
+            self.puzzle_state = self.set_pocket_cube_state(state_string)
         print("State set to " + state_string)
 
     def do_randomizeState(self, move_count_string):
@@ -46,8 +58,13 @@ class CommandLoop(cmd.Cmd):
         for move_index in range(0, move_count):
             current_neighbors = self.puzzle_state.neighbors
             random_neighbor_index = random.randint(0, len(current_neighbors)-1)
-            self.puzzle_state = current_neighbors[random_neighbor_index]
-            self.puzzle_state = EightPuzzleState(self.puzzle_state.get_tiles()) # resets the state's parent & last move
+            # resets the state's parent & last move
+            if self.mode == Mode.EIGHT_PUZZLE:
+                self.puzzle_state = current_neighbors[random_neighbor_index]
+                self.puzzle_state = EightPuzzleState(self.puzzle_state.get_tiles()) # resets the state's aux data
+            else:
+                self.puzzle_state = current_neighbors[random_neighbor_index]
+                self.puzzle_state = PocketCubeState(self.puzzle_state.get_tiles())
         self.print_state()
 
     def do_printState(self, arg):
@@ -126,11 +143,14 @@ class CommandLoop(cmd.Cmd):
                 state_list.append(0)
             else:
                 state_list.append(int(state_string_char))
-        state_tuple = tuple(state_list)
-        if self.mode == Mode.EIGHT_PUZZLE:
-            return EightPuzzleState(state_tuple)
-        else:
-            pass  # TODO: return new pocket cube state
+        return EightPuzzleState(tuple(state_list))
+
+    def set_pocket_cube_state(self, state_string):
+        state_list = []
+        for state_string_char in state_string.replace(" ", ""):
+            state_list.append(state_string_char)
+        state_tuple = PocketCubeState(tuple(state_list))
+        return state_tuple
 
     def solve_A_star(self, heuristic_string):
         """Solves the current puzzle state with A* using either h1 or h2 depending on input"""

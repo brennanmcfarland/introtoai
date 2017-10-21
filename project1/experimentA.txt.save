@@ -1,0 +1,5 @@
+maxNodes 2500
+
+setState b12 345 678
+randomizeState 50
+solve A-star h1

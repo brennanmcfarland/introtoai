@@ -3,3 +3,5 @@
 
 #ignore pyc files
 *.pyc
+#ignore zip files
+*.zip

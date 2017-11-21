@@ -1,0 +1,9 @@
+maxNodes 10000
+setMode pocket-cube
+solve A-star h2
+solve beam 7
+randomizeState 5
+solve A-star h1
+solve beam 7
+randomizeState 10
+solve A-star h2

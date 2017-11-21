@@ -1,0 +1,3 @@
+setMode pocket-cube
+randomizeState 10
+solve A-star h1

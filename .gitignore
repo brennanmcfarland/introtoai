@@ -5,3 +5,6 @@
 *.pyc
 #ignore zip files
 *.zip
+
+#ignore image graph outputs
+*.png

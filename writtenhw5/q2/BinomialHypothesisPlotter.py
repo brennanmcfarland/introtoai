@@ -1,10 +1,15 @@
 from collections import namedtuple
 from matplotlib import pyplot
 import random
+import math
 
 # constant declarations
 BinomialHypothesis = namedtuple('BinomialHypothesis', 'name, theta')
 
+
+#TODO: despite using logs for better precision, it's still not right, using scatter instead
+#TODO: of plot makes it clear that something's not right with the dataset, or the way it's being
+#TODO: plotted, or something
 
 def generate_probability_graphs(hypotheses):
     assert isinstance(hypotheses, tuple)
@@ -12,11 +17,11 @@ def generate_probability_graphs(hypotheses):
     for hypothesis in hypotheses:
         data_count = 100
         dataset = list(generate_dataset(hypothesis, data_count))
-        alpha = generate_alpha(dataset, hypotheses)
+        log_alpha = generate_log_alpha(dataset, hypotheses)
         print(dataset)
 
         # iteratively do this on increasing portions of the list
-        posteriors = list(generate_posteriors(hypothesis, len(hypotheses), dataset, alpha))
+        posteriors = list(generate_posteriors(hypothesis, len(hypotheses), dataset, log_alpha))
         print(posteriors)
         yield dataset, posteriors
 
@@ -33,14 +38,20 @@ def generate_dataset(hypothesis, data_count):
 def generate_alpha(dataset, hypotheses):
     assert isinstance(hypotheses, tuple)
 
-    alpha = 1.0 / len(hypotheses)
+    return math.pow(math.e, generate_log_alpha(dataset, hypotheses))
+
+
+def generate_log_alpha(dataset, hypotheses):
+    assert isinstance(hypotheses, tuple)
+
+    outer_sum = 0.0
     for i in range(len(dataset)):
-        alpha_sum = 0
+        inner_sum = 0.0
         for j in range(len(hypotheses)):
-            alpha_sum += p_d_given_h(dataset[i], hypotheses[j])
-        alpha *= alpha_sum
-    alpha = 1 / alpha
-    return alpha
+            inner_sum += p_d_given_h(dataset[i], hypotheses[j])
+        outer_sum += math.log(inner_sum)
+
+    return math.log(len(hypotheses)) - outer_sum
 
 
 def generate_posteriors(hypothesis, num_hypotheses, dataset, alpha):
@@ -48,12 +59,17 @@ def generate_posteriors(hypothesis, num_hypotheses, dataset, alpha):
         yield generate_posterior(hypothesis, num_hypotheses, dataset[:i+1], alpha)
 
 
-def generate_posterior(hypothesis, num_hypotheses, dataset, alpha):
-    posterior = 1.0 / num_hypotheses
+def generate_posterior(hypothesis, num_hypotheses, dataset, log_alpha):
+    sum = 0.0
     for i in range(len(dataset)):
-        posterior *= p_d_given_h(dataset[i], hypothesis)
-    posterior *= alpha
-    return posterior
+        sum += math.log(p_d_given_h(dataset[i], hypothesis))
+    log_posterior = -math.log(num_hypotheses) + log_alpha + sum
+    return math.pow(math.e, log_posterior)
+
+
+def generate_prob_next_datapoint():
+    # TODO: implement
+    pass
 
 
 def p_d_given_h(d, h):

@@ -77,9 +77,9 @@ def generate_posteriors(hypothesis, num_hypotheses, dataset, alpha):
 def generate_posterior(hypothesis, num_hypotheses, dataset, log_alpha):
     sum = 0.0
     for i in range(len(dataset)):
-        # TODO: is the sum overflowing?
-        print(sum)
-        sum += math.log(p_d_given_h(dataset[i], hypothesis))
+        inner_probability = p_d_given_h(dataset[i], hypothesis)
+        if inner_probability > 0.0:
+            sum += math.log(inner_probability)
     log_posterior = -math.log(num_hypotheses) + log_alpha + sum
     return math.pow(math.e, log_posterior)
 
@@ -92,7 +92,6 @@ def generate_prob_next_datapoint():
 def p_d_given_h(d, h):
     assert isinstance(d, bool)
     assert isinstance(h, BinomialHypothesis)
-
     if d:
         return h.theta
     else:
@@ -118,13 +117,12 @@ pyplot.tight_layout()
 h_plots = [axes[0, 0], axes[0, 1], axes[1, 0], axes[1, 1]]
 
 probability_graphs = list(generate_probability_graphs((h1, h2, h3, h4)))
-print(probability_graphs)
 # TODO: now we just have to unpack the data from the generator functions and plot it
-for h_graph in range(len(h_plots)):
-    h_graph_plot = list(probability_graphs[h_graph])
-    print(h_graph_plot)
-    for h_curve in range(len(h_plots)):
-        h_curve_plot = list(h_graph_plot[h_curve])
-        h_plots[h_graph].plot(h_curve_plot[0], h_curve_plot[1])
+for h_graph in range(len(probability_graphs)):
+    h_graph_curves = probability_graphs[h_graph]
+    print(h_graph_curves)
+    for h_curve in h_graph_curves:
+        x, y = h_curve
+        h_plots[h_graph].plot(x, y)
 
 pyplot.show()

@@ -8,3 +8,4 @@
 
 #ignore image graph outputs
 *.png
+*.csv

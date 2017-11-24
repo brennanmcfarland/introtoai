@@ -3,6 +3,8 @@ import matplotlib.pyplot as pyplot
 import enum
 
 
+RADIUS = 1.0
+
 # ASSIGNMENT 1a.
 Classification = enum.Enum('Classification', 'VERSICOLOR VIRGINICA')
 
@@ -20,6 +22,11 @@ def plot_linear_decision_boundary():
 
 
 # ASSIGNMENT 1c.
+def plot_circle_boundary(centerx, centery):
+    # TODO: implement
+    pass
+
+
 def classify(x, y):
     if y > linear_decision_boundary(x):
         return Classification.VIRGINICA
@@ -27,6 +34,40 @@ def classify(x, y):
         return Classification.VERSICOLOR
 
 
+# ASSIGNMENT 1d.
+def radially_classify(x, y, centerx, centery):
+    if (x-centerx)*(x-centerx) + (y-centery)*(y-centery) > RADIUS:
+        return Classification.VIRGINICA
+    else:
+        return Classification.VERSICOLOR
+
+
+def plot_radial_classification_at_center(centerx, centery, subplot):
+    new_versicolor_xs = []
+    new_versicolor_ys = []
+    new_virginica_xs = []
+    new_virginica_ys = []
+    input_xs = [float(i) for i in versicolor_xs + virginica_xs]
+    input_ys = [float(i) for i in versicolor_ys + virginica_ys]
+    for i in range(len(input_xs)):
+        if radially_classify(input_xs[i], input_ys[i], centerx, centery) == Classification.VERSICOLOR:
+            new_versicolor_xs.append(input_xs[i])
+            new_versicolor_ys.append(input_ys[i])
+        else:
+            new_virginica_xs.append(input_xs[i])
+            new_virginica_ys.append(input_ys[i])
+        subplot.scatter(new_versicolor_xs, new_versicolor_ys, label='Versicolor')
+        subplot.scatter(new_virginica_xs, new_virginica_ys, label='Virginica')
+
+
+def plot_radial_classification():
+    fig, axes = pyplot.subplots(2, 2)
+    plot_radial_classification_at_center(1.0, 1.0, axes[0, 0])
+    plot_radial_classification_at_center(2.0, 1.0, axes[0, 1])
+    plot_radial_classification_at_center(1.0, 2.0, axes[1, 0])
+
+
+# ASSIGNMENT 1c.
 def plot_classifier_examples():
     new_versicolor_xs = []
     new_versicolor_ys = []
@@ -56,6 +97,7 @@ def show_plot():
     pyplot.ylabel('petal width (cm)')
     pyplot.show()
 
+
 versicolor_xs = []
 versicolor_ys = []
 virginica_xs = []
@@ -78,4 +120,8 @@ show_plot()
 
 # ASSIGNMENT 1c.
 plot_classifier_examples()
+show_plot()
+
+# ASSIGNMENT 1d.
+plot_radial_classification()
 show_plot()

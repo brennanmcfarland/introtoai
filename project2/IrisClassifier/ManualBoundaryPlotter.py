@@ -56,15 +56,15 @@ def graph_radial_classification_class_at_center(centerx, centery, input_xs, inpu
 
 
 def plot_radial_classification_at_center(centerx, centery, subplot):
-    input_xs = [float(i) for i in iris.versicolor_xs]
-    input_ys = [float(i) for i in iris.versicolor_ys]
+    input_xs = iris.versicolor_xs
+    input_ys = iris.versicolor_ys
     correct_xs, correct_ys, incorrect_xs, incorrect_ys = graph_radial_classification_class_at_center(
         centerx, centery, input_xs, input_ys, iris.Classification.VERSICOLOR)
     print(len(incorrect_ys))
     subplot.scatter(correct_xs, correct_ys, label='Versicolor', color='blue')
     subplot.scatter(incorrect_xs, incorrect_ys, label='Versicolor (erroneous)', color='green')
-    input_xs = [float(i) for i in iris.virginica_xs]
-    input_ys = [float(i) for i in iris.virginica_ys]
+    input_xs = iris.virginica_xs
+    input_ys = iris.virginica_ys
     correct_xs, correct_ys, incorrect_xs, incorrect_ys = graph_radial_classification_class_at_center(
         centerx, centery, input_xs, input_ys, iris.Classification.VIRGINICA)
     subplot.scatter(correct_xs, correct_ys, label='Virginica', color='orange')
@@ -85,9 +85,9 @@ def plot_classifier_examples():
     new_versicolor_ys = []
     new_virginica_xs = []
     new_virginica_ys = []
-    example_xs = [float(i) for i in iris.versicolor_xs[:3]] + [float(i) for i in iris.virginica_xs[:3]]
+    example_xs = iris.versicolor_xs[:3] + iris.virginica_xs[:3]
     print(example_xs)
-    example_ys = [float(i) for i in iris.versicolor_ys[:3]] + [float(i) for i in iris.virginica_ys[:3]]
+    example_ys = iris.versicolor_ys[:3] + iris.virginica_ys[:3]
     for i in range(len(example_xs)):
         if classify(example_xs[i], example_ys[i]) == iris.Classification.VERSICOLOR:
             new_versicolor_xs.append(example_xs[i])

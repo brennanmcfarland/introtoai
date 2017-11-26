@@ -14,17 +14,18 @@ virginica_ys = []
 
 
 # ASSIGNMENT 1a.
+# TODO: modify this for the k-means clustering extra credit to load all the data?
 def load_iris_data():
     with open('irisdata.csv', newline='') as csvfile:
         csvreader = csv.DictReader(csvfile)
         # line should be an ordered dict of col values indexed by the header row
         for line in csvreader:
             if line['species'] == "versicolor":
-                versicolor_xs.append(line['petal_length'])
-                versicolor_ys.append(line['petal_width'])
+                versicolor_xs.append(float(line['petal_length']))
+                versicolor_ys.append(float(line['petal_width']))
             elif line['species'] == "virginica":
-                virginica_xs.append(line['petal_length'])
-                virginica_ys.append(line['petal_width'])
+                virginica_xs.append(float(line['petal_length']))
+                virginica_ys.append(float(line['petal_width']))
 
 
 # ASSIGNMENT 1a.

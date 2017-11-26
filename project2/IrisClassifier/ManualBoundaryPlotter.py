@@ -1,12 +1,8 @@
 import matplotlib.pyplot as pyplot
-import enum
 import IrisDataPlotter as iris
 
 
 RADIUS = 1.0
-
-# ASSIGNMENT 1a.
-Classification = enum.Enum('Classification', 'VERSICOLOR VIRGINICA')
 
 
 # ASSIGNMENT 1b.
@@ -29,17 +25,17 @@ def plot_circle_boundary(centerx, centery, subplot):
 
 def classify(x, y):
     if y > linear_decision_boundary(x):
-        return Classification.VIRGINICA
+        return iris.Classification.VIRGINICA
     else:
-        return Classification.VERSICOLOR
+        return iris.Classification.VERSICOLOR
 
 
 # ASSIGNMENT 1d.
 def radially_classify(x, y, centerx, centery):
     if (x-centerx)*(x-centerx) + (y-centery)*(y-centery) < RADIUS:
-        return Classification.VIRGINICA
+        return iris.Classification.VIRGINICA
     else:
-        return Classification.VERSICOLOR
+        return iris.Classification.VERSICOLOR
 
 
 def graph_radial_classification_class_at_center(centerx, centery, input_xs, input_ys, correct_class):
@@ -63,14 +59,14 @@ def plot_radial_classification_at_center(centerx, centery, subplot):
     input_xs = [float(i) for i in iris.versicolor_xs]
     input_ys = [float(i) for i in iris.versicolor_ys]
     correct_xs, correct_ys, incorrect_xs, incorrect_ys = graph_radial_classification_class_at_center(
-        centerx, centery, input_xs, input_ys, Classification.VERSICOLOR)
+        centerx, centery, input_xs, input_ys, iris.Classification.VERSICOLOR)
     print(len(incorrect_ys))
     subplot.scatter(correct_xs, correct_ys, label='Versicolor', color='blue')
     subplot.scatter(incorrect_xs, incorrect_ys, label='Versicolor (erroneous)', color='green')
     input_xs = [float(i) for i in iris.virginica_xs]
     input_ys = [float(i) for i in iris.virginica_ys]
     correct_xs, correct_ys, incorrect_xs, incorrect_ys = graph_radial_classification_class_at_center(
-        centerx, centery, input_xs, input_ys, Classification.VIRGINICA)
+        centerx, centery, input_xs, input_ys, iris.Classification.VIRGINICA)
     subplot.scatter(correct_xs, correct_ys, label='Virginica', color='orange')
     subplot.scatter(incorrect_xs, incorrect_ys, label='Virginica (erroneous)', color='red')
     plot_circle_boundary(centerx, centery, subplot)
@@ -93,7 +89,7 @@ def plot_classifier_examples():
     print(example_xs)
     example_ys = [float(i) for i in iris.versicolor_ys[:3]] + [float(i) for i in iris.virginica_ys[:3]]
     for i in range(len(example_xs)):
-        if classify(example_xs[i], example_ys[i]) == Classification.VERSICOLOR:
+        if classify(example_xs[i], example_ys[i]) == iris.Classification.VERSICOLOR:
             new_versicolor_xs.append(example_xs[i])
             new_versicolor_ys.append(example_ys[i])
         else:
@@ -105,7 +101,6 @@ def plot_classifier_examples():
 
 
 # ASSIGNMENT 1a.
-
 iris.load_iris_data()
 
 pyplot.scatter(iris.versicolor_xs, iris.versicolor_ys, label='Versicolor')

@@ -1,5 +1,10 @@
 import csv
+import enum
 import matplotlib.pyplot as pyplot
+
+
+# ASSIGNMENT 1a.
+Classification = enum.Enum('Classification', 'VERSICOLOR VIRGINICA')
 
 
 versicolor_xs = []
@@ -8,6 +13,7 @@ virginica_xs = []
 virginica_ys = []
 
 
+# ASSIGNMENT 1a.
 def load_iris_data():
     with open('irisdata.csv', newline='') as csvfile:
         csvreader = csv.DictReader(csvfile)
@@ -21,6 +27,7 @@ def load_iris_data():
                 virginica_ys.append(line['petal_width'])
 
 
+# ASSIGNMENT 1a.
 def show_plot():
     for subplot in pyplot.gcf().get_axes():
         subplot.legend()

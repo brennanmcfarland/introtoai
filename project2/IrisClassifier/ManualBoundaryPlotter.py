@@ -22,9 +22,10 @@ def plot_linear_decision_boundary():
 
 
 # ASSIGNMENT 1c.
-def plot_circle_boundary(centerx, centery):
+def plot_circle_boundary(centerx, centery, subplot):
     # TODO: implement
-    pass
+    circle = pyplot.Circle((centerx, centery), RADIUS, facecolor='none', edgecolor='blue')
+    subplot.add_patch(circle)
 
 
 def classify(x, y):
@@ -36,35 +37,51 @@ def classify(x, y):
 
 # ASSIGNMENT 1d.
 def radially_classify(x, y, centerx, centery):
-    if (x-centerx)*(x-centerx) + (y-centery)*(y-centery) > RADIUS:
+    if (x-centerx)*(x-centerx) + (y-centery)*(y-centery) < RADIUS:
         return Classification.VIRGINICA
     else:
         return Classification.VERSICOLOR
 
 
-def plot_radial_classification_at_center(centerx, centery, subplot):
-    new_versicolor_xs = []
-    new_versicolor_ys = []
-    new_virginica_xs = []
-    new_virginica_ys = []
-    input_xs = [float(i) for i in versicolor_xs + virginica_xs]
-    input_ys = [float(i) for i in versicolor_ys + virginica_ys]
+def graph_radial_classification_class_at_center(centerx, centery, input_xs, input_ys, correct_class):
+    correct_xs = []
+    correct_ys = []
+    incorrect_xs = []
+    incorrect_ys = []
     for i in range(len(input_xs)):
-        if radially_classify(input_xs[i], input_ys[i], centerx, centery) == Classification.VERSICOLOR:
-            new_versicolor_xs.append(input_xs[i])
-            new_versicolor_ys.append(input_ys[i])
+        if radially_classify(input_xs[i], input_ys[i], centerx, centery) == correct_class:
+            correct_xs.append(input_xs[i])
+            correct_ys.append(input_ys[i])
         else:
-            new_virginica_xs.append(input_xs[i])
-            new_virginica_ys.append(input_ys[i])
-        subplot.scatter(new_versicolor_xs, new_versicolor_ys, label='Versicolor')
-        subplot.scatter(new_virginica_xs, new_virginica_ys, label='Virginica')
+            incorrect_xs.append(input_xs[i])
+            incorrect_ys.append(input_ys[i])
+
+    print(len(incorrect_xs))
+    return correct_xs, correct_ys, incorrect_xs, incorrect_ys
+
+
+def plot_radial_classification_at_center(centerx, centery, subplot):
+    input_xs = [float(i) for i in versicolor_xs]
+    input_ys = [float(i) for i in versicolor_ys]
+    correct_xs, correct_ys, incorrect_xs, incorrect_ys = graph_radial_classification_class_at_center(
+        centerx, centery, input_xs, input_ys, Classification.VERSICOLOR)
+    print(len(incorrect_ys))
+    subplot.scatter(correct_xs, correct_ys, label='Versicolor', color='blue')
+    subplot.scatter(incorrect_xs, incorrect_ys, label='Versicolor (erroneous)', color='green')
+    input_xs = [float(i) for i in virginica_xs]
+    input_ys = [float(i) for i in virginica_ys]
+    correct_xs, correct_ys, incorrect_xs, incorrect_ys = graph_radial_classification_class_at_center(
+        centerx, centery, input_xs, input_ys, Classification.VIRGINICA)
+    subplot.scatter(correct_xs, correct_ys, label='Virginica', color='orange')
+    subplot.scatter(incorrect_xs, incorrect_ys, label='Virginica (erroneous)', color='red')
+    plot_circle_boundary(centerx, centery, subplot)
 
 
 def plot_radial_classification():
     fig, axes = pyplot.subplots(2, 2)
-    plot_radial_classification_at_center(1.0, 1.0, axes[0, 0])
-    plot_radial_classification_at_center(2.0, 1.0, axes[0, 1])
-    plot_radial_classification_at_center(1.0, 2.0, axes[1, 0])
+    plot_radial_classification_at_center(5.7, 2.0, axes[0, 0])
+    plot_radial_classification_at_center(6.0, 2.2, axes[0, 1])
+    plot_radial_classification_at_center(5.2, 1.7, axes[1, 0])
 
 
 # ASSIGNMENT 1c.

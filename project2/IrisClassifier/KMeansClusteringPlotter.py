@@ -4,18 +4,14 @@ import IrisDataPlotter as iris
 from scipy.spatial import distance
 
 
-NUM_CLUSTERS = 2
-
-
-def initialize_means(data):
+def initialize_means(k, data):
     random.seed(1025)
     means = []
-    for i in range(NUM_CLUSTERS):
+    for i in range(k):
         means.append([random.uniform(min(data[0]), max(data[0])), random.uniform(min(data[1]), max(data[1]))])
     return means
 
 
-# TODO: fix and finish implementing for an arbitrary number of dimensions (use helper functions)
 def update_means(u, x):
     assert isinstance(u, list)
 
@@ -36,18 +32,6 @@ def update_means(u, x):
         new_u.append([numerator[i]/denominator[i] for i in range(len(numerator))])
     return new_u
 
-        # for i in range(len(uk)):
-        #     update_means_dimension(means, i)
-
-
-# def update_means_dimension(i):
-#     numerator = 0.0
-#     denominator = 0.0
-#     for n in range(len(data[i])):
-#         numerator += data[i][n] * 2  # TODO: what is the correct value for r_n,k? (instead of 2)
-#         denominator += 2  # TODO: same as above
-#     return numerator / denominator
-
 
 def closest_mean(xn, u):
     assert isinstance(u, list)
@@ -62,29 +46,33 @@ def closest_mean(xn, u):
     return closest_u
 
 
-def is_closest_to(k):
-
-    pass  # TODO: implement, may want to talk to others to make sure this is the right equation
-    # TODO: before proceeding
-
-
-# TODO: get it to plot for arbitrary # dimensions?
-def plot_means():
+def plot_means(subplot, means):
     for mean in means:
-        pyplot.scatter(mean[0], mean[1], marker='P')
+        subplot.scatter(mean[0], mean[1], marker='P', color='black')
 
 
-def plot_and_show():
-    pyplot.scatter(iris.versicolor_xs, iris.versicolor_ys, label='Versicolor')
-    pyplot.scatter(iris.virginica_xs, iris.virginica_ys, label='Virginica')
-    plot_means()
-    iris.show_plot()
+def plot(subplot, means):
+    subplot.scatter(iris.versicolor_xs, iris.versicolor_ys, label='Versicolor')
+    subplot.scatter(iris.virginica_xs, iris.virginica_ys, label='Virginica')
+    plot_means(subplot, means)
 
 
-iris.load_iris_data()
+def plot_convergence(k, data, subplots):
+    means = list(initialize_means(k, data))
+    plot(subplots[0], means)
+    for i in range(5):
+        means = update_means(means, data)
+        if i == 2:
+            plot(subplots[1], means)
+    plot(subplots[2], means)
 
+
+iris.load_iris_data() # TODO: load all the data instead of just virginica and versicolor?
 data = (iris.versicolor_xs + iris.virginica_xs, iris.versicolor_ys + iris.virginica_ys)
-means = list(initialize_means(data))
-for i in range(12):
-    means = update_means(means, data)
-        plot_and_show()
+
+fig, axes = pyplot.subplots(2, 3)
+k_2_subplots = (axes[0][0], axes[0][1], axes[0][2])
+k_3_subplots = (axes[1][0], axes[1][1], axes[1][2])
+plot_convergence(2, data, k_2_subplots)
+plot_convergence(3, data, k_3_subplots)
+iris.show_plot()

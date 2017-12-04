@@ -2,143 +2,96 @@ from collections import namedtuple
 from matplotlib import pyplot
 import random
 import math
+import scipy.misc
 
 # constant declarations
-BinomialHypothesis = namedtuple('BinomialHypothesis', 'name, theta')
+BinomialHypothesis = namedtuple('BinomialHypothesis', 'name, theta, probability')
+random.seed(2051)  # I again set the seed to a hardcoded value for consistent results
 
 
-# TODO: it's supposed to make 4 graphs, 1 for each hypothesis being correct, and EACH GRAPH SHOULD
-# TODO: HAVE 5 LINES FOR THE PROBABILITY OF EACH HYPOTHESIS, fix that
-
-#TODO: the number of curves appears to be correct, they're just not all being plotted
-#TODO: why is everything almost 0?
 # for each hypothesis being true, generate the probability curve of each hypothesis
-def generate_probability_graphs(hypotheses):
+def generate_probability_graphs(hypotheses, averaging):
     assert isinstance(hypotheses, tuple)
 
-    for hypothesis in hypotheses:
+    nrows, ncols = 2, 3
+    fig, axes = pyplot.subplots(nrows=nrows, ncols=ncols)
+    fig2, axes2 = pyplot.subplots(nrows=nrows, ncols=ncols)
+    pyplot.tight_layout()
+    h_plots = [axes[0, 0], axes[0, 1], axes[0, 2], axes[1, 0], axes[1, 1]]
+    next_d_plots = [axes2[0, 0], axes2[0, 1], axes2[0, 2], axes2[1, 0], axes2[1, 1]]
+
+    for i in range(len(hypotheses)):
         data_count = 100
-        dataset = list(generate_dataset(hypothesis, data_count))
-        log_alpha = generate_log_alpha(dataset, hypotheses)
-
-        x = generate_probability_graph(hypotheses, hypothesis, dataset, log_alpha)
-        assert len(list(x)) == 5
-
-        yield generate_probability_graph(hypotheses, hypothesis, dataset, log_alpha)
-
-
-def generate_probability_graph(hypotheses, correct_hypothesis, dataset, log_alpha):
-    assert isinstance(hypotheses, tuple)
-    assert isinstance(correct_hypothesis, BinomialHypothesis)
-
-    assert len(hypotheses) == 5
-    for hypothesis in hypotheses:
-        yield generate_probability_curve(hypotheses, correct_hypothesis, hypothesis, dataset, log_alpha)
+        dataset = list(generate_dataset(hypotheses[i], data_count))
+        posteriors = list(generate_posteriors(hypotheses, list(generate_favorable_outcomes(dataset))))
+        if averaging:
+            dataset2 = list(generate_dataset(hypotheses[i], data_count))
+            posteriors2 = list(generate_posteriors(hypotheses, list(generate_favorable_outcomes(dataset2))))
+            posteriors[i] = [(posteriors[i][n] + posteriors2[i][n]) / 2.0 for n in range(len(posteriors[i]))]
+        probabilities_next_value_false = generate_probability_next_value_false(hypotheses, posteriors)
+        for j in range(len(posteriors)):
+            label = "h" + str(j+1)
+            print(label)
+            h_plots[i].plot(range(data_count), posteriors[j], label=label)
+            h_plots[i].legend()
+        next_d_plots[i].plot(range(data_count), probabilities_next_value_false)
+    pyplot.show()
 
 
-# TODO: the probabilities here are still valid
-def generate_probability_curve(hypotheses, correct_hypothesis, this_hypothesis, dataset, log_alpha):
-    assert isinstance(hypotheses, tuple)
-    assert isinstance(correct_hypothesis, BinomialHypothesis)
-    assert isinstance(this_hypothesis, BinomialHypothesis)
+def generate_posteriors(h, y):
 
-    # iteratively do this on increasing portions of the list
-    posteriors = list(generate_posteriors(this_hypothesis, len(hypotheses), dataset, log_alpha))
+    # indexed by h, then n
+    posteriors = []
+    for hi in h:
+        posteriors.append([])
 
-    for posterior in posteriors:
-        assert 0 <= posterior <= 1
-    return range(len(dataset)), posteriors
+    for n in range(len(y)):
+        normalizing_constant = 0
+        unnormalized_posteriors = []
+        for i in range(len(h)):
+            likelihood = scipy.misc.comb(n+1, y[n]) * math.pow(h[i].theta, y[n]) * math.pow(1-h[i].theta, n+1-y[n])
+            normalizing_constant += likelihood * h[i].probability
+            unnormalized_posteriors.append(likelihood * h[i].probability)
+        for i in range(len(h)):
+            posteriors[i].append(unnormalized_posteriors[i]/normalizing_constant)
+    return posteriors
+
+
+def generate_probability_next_value_false(h, posteriors):
+
+    probabilities_next_value_false = []
+    for n in range(len(posteriors[0])):
+        sum_probabilities = 0
+        for i in range(len(h)):
+            sum_probabilities += posteriors[i][n] * (1-h[i].theta)
+        probabilities_next_value_false.append(sum_probabilities)
+    return probabilities_next_value_false
 
 
 def generate_dataset(hypothesis, data_count):
     assert isinstance(hypothesis, BinomialHypothesis)
     assert isinstance(data_count, int)
 
-    random.seed(2049)  # I again set the seed to a hardcoded value for consistent results
     for i in range(data_count):
         yield (random.random() < hypothesis.theta)
 
 
-def generate_alpha(dataset, hypotheses):
-    assert isinstance(hypotheses, tuple)
-
-    return math.pow(math.e, generate_log_alpha(dataset, hypotheses))
-
-
-def generate_log_alpha(dataset, hypotheses):
-    assert isinstance(hypotheses, tuple)
-
-    outer_sum = 0.0
-    for i in range(len(dataset)):
-        inner_sum = 0.0
-        for j in range(len(hypotheses)):
-            inner_sum += p_d_given_h(dataset[i], hypotheses[j])
-        outer_sum += math.log(inner_sum)
-
-    return math.log(len(hypotheses)) - outer_sum
-
-
-def generate_posteriors(hypothesis, num_hypotheses, dataset, alpha):
-    for i in range(len(dataset)):
-        yield generate_posterior(hypothesis, num_hypotheses, dataset[:i + 1], alpha)
-
-
-# TODO: this is asserted to be a true probability, so the error must be in how I'm plotting it
-def generate_posterior(hypothesis, num_hypotheses, dataset, log_alpha):
-    sum = 0.0
-    for i in range(len(dataset)):
-        inner_probability = p_d_given_h(dataset[i], hypothesis)
-        if inner_probability > 0.0:
-            sum += math.log(inner_probability)
-    log_posterior = -math.log(num_hypotheses) + log_alpha + sum
-
-    assert 0 <= math.pow(math.e, log_posterior) <= 1
-    return math.pow(math.e, log_posterior)
-
-
-def generate_prob_next_datapoint():
-    # TODO: implement
-    pass
-
-
-def p_d_given_h(d, h):
-    assert isinstance(d, bool)
-    assert isinstance(h, BinomialHypothesis)
-    if d:
-        return h.theta
-    else:
-        return 1.0 - h.theta
-
-
-def plot_row(row, num_cols, x, y):
-    for i in range(num_cols):
-        row[i].plot(x, y)
+def generate_favorable_outcomes(dataset):
+    y = 0
+    for n in range(len(dataset)):
+        if dataset[n]:
+            y += 1
+        yield y
 
 
 # probabilities for the bags o' surprise problem, by P(cherry)
-h1 = BinomialHypothesis(name='h1', theta=1.0)
-h2 = BinomialHypothesis(name='h2', theta=.75)
-h3 = BinomialHypothesis(name='h3', theta=.5)
-h4 = BinomialHypothesis(name='h4', theta=.25)
-h5 = BinomialHypothesis(name='h5', theta=0.0)
+h1 = BinomialHypothesis(name='h1', theta=1.0, probability=.1)
+h2 = BinomialHypothesis(name='h2', theta=.75, probability=.2)
+h3 = BinomialHypothesis(name='h3', theta=.5, probability=.4)
+h4 = BinomialHypothesis(name='h4', theta=.25, probability=.2)
+h5 = BinomialHypothesis(name='h5', theta=0.0, probability=.1)
 
-nrows, ncols = 2, 2
-fig, axes = pyplot.subplots(nrows=nrows, ncols=nrows)
-pyplot.tight_layout()
 
-h_plots = [axes[0, 0], axes[0, 1], axes[1, 0], axes[1, 1]]
+generate_probability_graphs((h1, h2, h3, h4, h5), False)
+generate_probability_graphs((h1, h2, h3, h4, h5), True)
 
-probability_graphs = list(generate_probability_graphs((h1, h2, h3, h4, h5)))
-# -1 since we're not plotting when h5 is true
-assert len(probability_graphs) == 5
-for h_graph in range(len(probability_graphs) - 1):
-    h_graph_curves = probability_graphs[h_graph]
-    for h_curve in h_graph_curves:
-        x, y = h_curve
-        print(y)
-        for yi in y:
-            assert 0 <= yi <= 1.0
-        print("plotting subplot ", h_graph)
-        h_plots[h_graph].plot(x, y)
-
-pyplot.show()

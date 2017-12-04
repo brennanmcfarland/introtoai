@@ -51,13 +51,18 @@ def plot_means(subplot, means):
         subplot.scatter(mean[0], mean[1], marker='P', color='black')
 
 
-def plot(subplot, means):
+def plot_versicolor_and_virginica(subplot, means):
     subplot.scatter(iris.versicolor_xs, iris.versicolor_ys, label='Versicolor')
     subplot.scatter(iris.virginica_xs, iris.virginica_ys, label='Virginica')
     plot_means(subplot, means)
 
 
-def plot_convergence(k, data, subplots):
+def plot_all(subplot, means):
+    subplot.scatter(iris.flower_xs, iris.flower_ys)
+    plot_means(subplot, means)
+
+
+def plot_convergence(k, data, subplots, plot):
     means = list(initialize_means(k, data))
     plot(subplots[0], means)
     for i in range(5):
@@ -67,12 +72,18 @@ def plot_convergence(k, data, subplots):
     plot(subplots[2], means)
 
 
-iris.load_iris_data() # TODO: load all the data instead of just virginica and versicolor?
-data = (iris.versicolor_xs + iris.virginica_xs, iris.versicolor_ys + iris.virginica_ys)
+def plot_for_2_and_3_k(data, plot):
+    fig, axes = pyplot.subplots(2, 3)
+    k_2_subplots = (axes[0][0], axes[0][1], axes[0][2])
+    k_3_subplots = (axes[1][0], axes[1][1], axes[1][2])
+    plot_convergence(2, data, k_2_subplots, plot)
+    plot_convergence(3, data, k_3_subplots, plot)
+    iris.show_plot()
 
-fig, axes = pyplot.subplots(2, 3)
-k_2_subplots = (axes[0][0], axes[0][1], axes[0][2])
-k_3_subplots = (axes[1][0], axes[1][1], axes[1][2])
-plot_convergence(2, data, k_2_subplots)
-plot_convergence(3, data, k_3_subplots)
-iris.show_plot()
+
+iris.load_iris_data()
+data = (iris.versicolor_xs + iris.virginica_xs, iris.versicolor_ys + iris.virginica_ys)
+plot_for_2_and_3_k(data, plot_versicolor_and_virginica)
+iris.load_iris_data_all_species()
+data = (iris.flower_xs, iris.flower_ys)
+plot_for_2_and_3_k(data, plot_all)

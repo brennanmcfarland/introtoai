@@ -6,7 +6,8 @@ import matplotlib.pyplot as pyplot
 # ASSIGNMENT 1a.
 Classification = enum.Enum('Classification', 'VERSICOLOR VIRGINICA')
 
-
+flower_xs = []
+flower_ys = []
 versicolor_xs = []
 versicolor_ys = []
 virginica_xs = []
@@ -14,7 +15,6 @@ virginica_ys = []
 
 
 # ASSIGNMENT 1a.
-# TODO: modify this for the k-means clustering extra credit to load all the data?
 def load_iris_data():
     with open('irisdata.csv', newline='') as csvfile:
         csvreader = csv.DictReader(csvfile)
@@ -26,6 +26,16 @@ def load_iris_data():
             elif line['species'] == "virginica":
                 virginica_xs.append(float(line['petal_length']))
                 virginica_ys.append(float(line['petal_width']))
+
+
+#ASSIGNMENT Written 4b
+def load_iris_data_all_species():
+    with open('irisdata.csv', newline='') as csvfile:
+        csvreader = csv.DictReader(csvfile)
+        # line should be an ordered dict of col values indexed by the header row
+        for line in csvreader:
+            flower_xs.append(float(line['petal_length']))
+            flower_ys.append(float(line['petal_width']))
 
 
 # ASSIGNMENT 1a.

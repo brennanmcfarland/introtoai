@@ -4,12 +4,12 @@ import matplotlib.pyplot as pyplot
 
 RADIUS = 1.0
 w = [-2, 8]
-weights = [-1.5, 8.5]
+weights = [8.5, -1.5]
 
 
 # ASSIGNMENT 2e.
 def learned_decision_boundary(x):
-    return weights[0]*x+weights[1]
+    return weights[1]*x+weights[0]
 
 
 # ASSIGNMENT 1b.
@@ -24,10 +24,10 @@ def bad_linear_decision_boundary(x):
 
 
 # ASSIGNMENT 1b.
-def plot_linear_decision_boundary(boundary_function):
+def plot_linear_decision_boundary(boundary_function, subplot):
     x = (4.1, 5.4)
     y = (boundary_function(x[0]), boundary_function(x[1]))
-    pyplot.plot(x, y)
+    subplot.plot(x, y)
 
 
 # ASSIGNMENT 1c.
@@ -54,9 +54,9 @@ def general_decision_threshold(data):
 
 def classify_generally(data):
     if general_decision_threshold(data) < data[-1]:
-        return 0
-    else:
         return 1
+    else:
+        return 0
 
 
 # ASSIGNMENT 1d.
@@ -85,8 +85,16 @@ def gradient(x, correct_pattern_classes):
     for i in range(len(weights)):
         gradient_dimension = 0
         for n in range(len(x)):
-            gradient_dimension += (classify_generally(x[n]))-(correct_pattern_classes[n])
-        gradient_dimension *= 2.0 / len(x) * weights[i] * .1
+            sign = 0
+            predicted_class = classify_generally(x[n])
+            correct_class = correct_pattern_classes[n]
+            if predicted_class != correct_class:
+                if correct_pattern_classes[n] == 1:
+                    sign = 1
+                else:
+                    sign = -1
+            gradient_dimension += x[n][i] * sign
+        gradient_dimension *= 2.0 / len(x) * .025 # step size
         gradient_vector.append(gradient_dimension)
     print(gradient_vector)
     return gradient_vector

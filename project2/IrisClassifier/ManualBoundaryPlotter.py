@@ -59,14 +59,14 @@ def plot_classifier_examples():
             new_virginica_xs.append(example_xs[i])
             new_virginica_ys.append(example_ys[i])
     iris.plot_iris_data()
-    boundary.plot_linear_decision_boundary(boundary.linear_decision_boundary)
+    boundary.plot_linear_decision_boundary(boundary.linear_decision_boundary, pyplot)
 
 
 # ASSIGNMENT 1a.
 iris.load_iris_data()
 
 iris.plot_iris_data()
-boundary.plot_linear_decision_boundary(boundary.linear_decision_boundary)  # ASSIGNMENT 1b.
+boundary.plot_linear_decision_boundary(boundary.linear_decision_boundary, pyplot)  # ASSIGNMENT 1b.
 iris.show_plot()
 
 # ASSIGNMENT 1c.

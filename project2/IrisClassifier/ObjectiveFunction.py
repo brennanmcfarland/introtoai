@@ -13,14 +13,14 @@ print(boundary.mean_squared_error(data_vectors, boundary.linear_decision_boundar
 print(boundary.mean_squared_error(data_vectors, boundary.bad_linear_decision_boundary, correct_classification))
 
 # ASSIGNMENT 2b.
-boundary.plot_linear_decision_boundary(boundary.linear_decision_boundary)
+boundary.plot_linear_decision_boundary(boundary.linear_decision_boundary, pyplot)
 pyplot.plot((5, 7), (boundary.bad_linear_decision_boundary(5), boundary.bad_linear_decision_boundary(7)))
 
 iris.plot_iris_data()
 iris.show_plot()
 
 # ASSIGNMENT 2e.
-boundary.plot_linear_decision_boundary(boundary.learned_decision_boundary)
+boundary.plot_linear_decision_boundary(boundary.learned_decision_boundary, pyplot)
 iris.plot_iris_data()
 iris.show_plot()
 
@@ -29,6 +29,6 @@ gradient = boundary.gradient([[1] + d for d in data_vectors], [1 if i == iris.Cl
 boundary.weights = [boundary.weights[i] + gradient[i] for i in range(len(gradient))]
 for i in boundary.weights:
     print(i)
-boundary.plot_linear_decision_boundary(boundary.learned_decision_boundary)
+boundary.plot_linear_decision_boundary(boundary.learned_decision_boundary, pyplot)
 iris.plot_iris_data()
 iris.show_plot()

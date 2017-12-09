@@ -4,7 +4,9 @@ import matplotlib.pyplot as pyplot
 
 
 # ASSIGNMENT 1a.
-Classification = enum.Enum('Classification', 'VERSICOLOR VIRGINICA')
+class Classification(enum.Enum):
+    VERSICOLOR = 0
+    VIRGINICA = 1
 
 flower_xs = []
 flower_ys = []
@@ -12,6 +14,12 @@ versicolor_xs = []
 versicolor_ys = []
 virginica_xs = []
 virginica_ys = []
+
+
+# ASSIGNMENT 1a.
+def plot_iris_data():
+    pyplot.scatter(versicolor_xs, versicolor_ys, label='Versicolor')
+    pyplot.scatter(virginica_xs, virginica_ys, label='Virginica')
 
 
 # ASSIGNMENT 1a.

@@ -14,10 +14,10 @@ random.seed = 2083
 boundary.weights = [random.uniform(0, 10), random.uniform(-10, 0)]
 error_plot_values = []
 iteration = 0
-while True:
+while iteration < 10000:
     error_plot_values.append(boundary.mean_squared_error(data_vectors, boundary.learned_decision_boundary, correct_classification))
 
-    if iteration % 10 == 0 or error_plot_values[-1] < .1:
+    if iteration % 20 == 0 or error_plot_values[-1] < .15:
         boundary.plot_linear_decision_boundary(boundary.learned_decision_boundary, pyplot)
         pyplot.scatter(iris.versicolor_xs, iris.versicolor_ys, label='Versicolor')
         pyplot.scatter(iris.virginica_xs, iris.virginica_ys, label='Virginica')
@@ -31,6 +31,7 @@ while True:
     print(gradient)
     boundary.weights = [boundary.weights[i] - gradient[i] for i in range(len(gradient))]
 
-    if error_plot_values[-1] < .1:
+    if error_plot_values[-1] < .15:
         break
     iteration += 1
+    print(iteration)

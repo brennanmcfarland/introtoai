@@ -58,7 +58,8 @@ def plot_classifier_examples():
         else:
             new_virginica_xs.append(example_xs[i])
             new_virginica_ys.append(example_ys[i])
-    iris.plot_iris_data()
+    pyplot.scatter(new_versicolor_xs, new_versicolor_ys, label='Versicolor')
+    pyplot.scatter(new_virginica_xs, new_virginica_ys, label='Virginica')
     boundary.plot_linear_decision_boundary(boundary.linear_decision_boundary, pyplot)
 
 

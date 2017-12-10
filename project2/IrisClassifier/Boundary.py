@@ -94,7 +94,7 @@ def gradient(x, correct_pattern_classes):
                 else:
                     sign = -1
             gradient_dimension += x[n][i] * sign
-        gradient_dimension *= 2.0 / len(x) * .025 # step size
+        gradient_dimension *= 2.0 / len(x) * .025  # step size
         gradient_vector.append(gradient_dimension)
     print(gradient_vector)
     return gradient_vector
